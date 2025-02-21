@@ -4,6 +4,7 @@ import { HashRouter as BrowserRouter, Routes, Route  } from "react-router-dom"
 import Home from './pages/Home';
 import Cadastrar from './pages/Cadastro';
 import Localizacao from './pages/Localizacao';
+import Locations from './pages/Localizacao';
 
 const App: React.FC = () => {
 
@@ -20,7 +21,7 @@ const App: React.FC = () => {
           <Routes>
             <Route  path="/" element={<Home />} />
             <Route path="/register" element={<Cadastrar/>} />
-            <Route path="/localization" element={<Localizacao/>} />
+            <Route path="/localization" element={<Locations/>} />
           </Routes>
         </BrowserRouter>
     </ThemeProvider>

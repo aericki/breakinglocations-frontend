@@ -1,5 +1,3 @@
-
-
 import Axios from 'axios'
 
 export interface Location {
@@ -27,12 +25,19 @@ export const fetchLocations = async (city: string = '') => {
 }
 
 export const createLocation = async (locationData: Location) => {
-
   const response = await api.post('/api/locations', locationData);
   return response.data
 }
 
 export const fetchCities = async () => {
   const response = await api.get('/api/locations/cities');
+  return response.data;
+};
+
+// Nova função para buscar todos os locais cadastrados
+export const fetchAllLocations = async () => {
+  // Como não há um endpoint específico para todos os locais,
+  // podemos buscar sem filtro de cidade para obter todos
+  const response = await api.get('/api/locations');
   return response.data;
 };

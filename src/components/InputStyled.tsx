@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
-
 
 import { Label } from '@/components/ui/label';
 import { Input, InputProps as ShadcnInputProps } from '@/components/ui/input';

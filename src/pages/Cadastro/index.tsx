@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { default as RenamedCaptcha } from '../../utils/captcha';
 import { InputStyled } from '@/components/InputStyled';
-import { Marker, TileLayer, MapContainer } from 'react-leaflet';
+import { Marker, TileLayer, Popup, MapContainer } from 'react-leaflet';
 import { MapClickEvent } from '@/components/MapClickEvent';
 import useGetLocation from '@/hooks/useGetLocation';
 import { useToast } from '@/hooks/use-toast';
 import { getReverseGeocoding } from '@/api/getReverseGeocoding';
-import { createLocation } from '@/api/locationApi';
+import { createLocation, fetchAllLocations } from '@/api/locationApi'; // Adicione fetchAllLocations na API
 import { Link, useNavigate } from 'react-router-dom';
 import { SyncLoader, ClipLoader } from 'react-spinners';
 import L from 'leaflet';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerIconRetina from 'leaflet/dist/images/marker-icon-2x.png';
-import { MapPinIcon, ArrowLeftIcon, HomeIcon } from 'lucide-react';
+import { MapPinIcon, ArrowLeftIcon, HomeIcon, AlertTriangleIcon, InfoIcon, CheckCircleIcon } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+import { Location } from '@/types';
 
 // Configuração do ícone do marcador
 const defaultIcon = L.icon({
@@ -26,7 +27,32 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41]
 });
 
+// Ícone para locais já existentes (vermelho para diferenciar)
+const existingLocationIcon = L.icon({
+  iconUrl: markerIcon, // Você pode substituir por um ícone vermelho personalizado
+  iconRetinaUrl: markerIconRetina,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41],
+  className: 'existing-marker' // Adiciona classe para estilizar com CSS
+});
+
 L.Marker.prototype.options.icon = defaultIcon;
+
+// Função para calcular a distância entre dois pontos (usando a fórmula de Haversine)
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371; // Raio da Terra em km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c * 1000; // Distância em metros
+};
 
 export default function Cadastrar() {
   const [hcaptchaToken, setHcaptchaToken] = useState('');
@@ -43,6 +69,10 @@ export default function Cadastrar() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cachedAddresses, setCachedAddresses] = useState<{ [key: string]: any }>({});
   const [mapHeight, setMapHeight] = useState('50vh');
+  const [existingLocations, setExistingLocations] = useState<Location[]>([]);
+  const [nearbyLocations, setNearbyLocations] = useState<Location[]>([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
 
   const { toast } = useToast();
   const { coords } = useGetLocation();
@@ -65,6 +95,49 @@ export default function Cadastrar() {
       window.removeEventListener('resize', updateMapHeight);
     };
   }, []);
+
+  // Carrega todos os locais existentes ao montar o componente
+  useEffect(() => {
+    const loadExistingLocations = async () => {
+      try {
+        setIsLoadingLocations(true);
+        // Precisamos implementar esta função na API para buscar todos os locais
+        const locations = await fetchAllLocations();
+        setExistingLocations(locations);
+      } catch (error) {
+        console.error("Erro ao carregar locais existentes:", error);
+        toast({ 
+          variant: 'destructive', 
+          title: 'Erro', 
+          description: 'Não foi possível carregar os locais existentes', 
+          color: 'red' 
+        });
+      } finally {
+        setIsLoadingLocations(false);
+      }
+    };
+
+    loadExistingLocations();
+  }, [toast]);
+
+  // Verifica locais próximos quando as coordenadas são atualizadas
+  useEffect(() => {
+    if (formValues.latitude && formValues.longitude) {
+      const MAX_DISTANCE = 500; // 500 metros
+      const nearby = existingLocations.filter(location => {
+        const distance = calculateDistance(
+          formValues.latitude, 
+          formValues.longitude, 
+          location.latitude, 
+          location.longitude
+        );
+        return distance < MAX_DISTANCE;
+      });
+      
+      setNearbyLocations(nearby);
+      setShowDuplicateWarning(nearby.length > 0);
+    }
+  }, [formValues.latitude, formValues.longitude, existingLocations]);
 
   const getAddress = async (lat: number, lng: number) => {
     const key = `${lat},${lng}`;
@@ -137,6 +210,17 @@ export default function Cadastrar() {
       });
     }
 
+    if (showDuplicateWarning) {
+      // Confirmar se usuário quer continuar mesmo com local próximo já existente
+      const confirmSubmit = window.confirm(
+        `Existem ${nearbyLocations.length} locais próximos já cadastrados. Tem certeza que deseja cadastrar um novo local?`
+      );
+      
+      if (!confirmSubmit) {
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       await createLocation(formValues);
@@ -188,6 +272,16 @@ export default function Cadastrar() {
           </div>
         </div>
 
+        {/* Aviso de carregamento */}
+        {isLoadingLocations && (
+          <div className="bg-blue-50 p-4 rounded-md mb-6 flex items-center">
+            <InfoIcon className="text-blue-600 mr-2" size={20} />
+            <p className="text-blue-700 text-sm">
+              Carregando locais existentes...
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="w-full">
           {/* Instruções */}
           <div className="bg-blue-50 p-4 rounded-md mb-6">
@@ -195,6 +289,22 @@ export default function Cadastrar() {
               <span className="font-bold">Como cadastrar:</span> Clique no mapa para selecionar a localização exata do centro de treinamento. Preencha os dados complementares no formulário abaixo.
             </p>
           </div>
+
+          {/* Aviso de locais próximos */}
+          {showDuplicateWarning && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+              <div className="flex items-start">
+                <AlertTriangleIcon className="text-yellow-500 mr-2 flex-shrink-0 mt-0.5" size={20} />
+                <div>
+                  <h3 className="text-yellow-800 font-medium">Atenção: Possível duplicação</h3>
+                  <p className="text-yellow-700 text-sm mt-1">
+                    Existem {nearbyLocations.length} locais já cadastrados próximos a este ponto.
+                    Por favor, verifique os marcadores vermelhos no mapa antes de continuar.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Seção do Mapa */}
           <div className="mb-6">
@@ -214,21 +324,105 @@ export default function Cadastrar() {
                   attribution='&copy; OpenStreetMap' 
                   url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' 
                 />
+                
+                {/* Marcador da nova localização */}
                 {formValues.latitude !== 0 && formValues.longitude !== 0 && (
-                  <Marker position={[formValues.latitude, formValues.longitude]} />
+                  <Marker position={[formValues.latitude, formValues.longitude]}>
+                    <Popup>
+                      <strong>Nova localização</strong>
+                      <p>{formValues.address}</p>
+                    </Popup>
+                  </Marker>
                 )}
+                
+                {/* Marcadores de locais existentes */}
+                {existingLocations.map((location) => (
+                  <Marker 
+                    key={`existing-${location.name}-${location.latitude}-${location.longitude}`}
+                    position={[location.latitude, location.longitude]}
+                    icon={existingLocationIcon}
+                  >
+                    <Popup>
+                      <div className="p-1">
+                        <h3 className="font-bold text-red-600">{location.name} <span className="text-xs font-normal">(existente)</span></h3>
+                        <p className="text-sm">{location.address}</p>
+                        <p className="text-xs text-gray-600">{location.city}, {location.state}</p>
+                        {formValues.latitude && formValues.longitude && (
+                          <p className="text-xs mt-1 font-medium">
+                            Distância: {Math.round(calculateDistance(
+                              formValues.latitude,
+                              formValues.longitude,
+                              location.latitude,
+                              location.longitude
+                            ))} metros
+                          </p>
+                        )}
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
               </MapContainer>
             </div>
             
             {/* Informações da localização selecionada */}
             {formValues.latitude !== 0 && formValues.longitude !== 0 && (
-              <div className="mt-2 p-3 bg-green-50 rounded-md border border-green-200">
-                <p className="text-green-700 text-sm font-medium">
-                  Localização selecionada: {formValues.address}, {formValues.city}
+              <div className={`mt-2 p-3 rounded-md border ${
+                showDuplicateWarning ? 'bg-yellow-50 border-yellow-200' : 'bg-green-50 border-green-200'
+              }`}>
+                <p className={`text-sm font-medium ${
+                  showDuplicateWarning ? 'text-yellow-700' : 'text-green-700'
+                }`}>
+                  {showDuplicateWarning ? (
+                    <span className="flex items-center">
+                      <AlertTriangleIcon size={16} className="mr-1" />
+                      Localização selecionada (próxima a locais existentes): 
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      <CheckCircleIcon size={16} className="mr-1" />
+                      Localização selecionada: 
+                    </span>
+                  )}
+                  {' '}{formValues.address}, {formValues.city}
                 </p>
               </div>
             )}
           </div>
+
+          {/* Lista de locais próximos */}
+          {nearbyLocations.length > 0 && (
+            <div className="mb-6 bg-white border border-gray-200 rounded-md overflow-hidden">
+              <div className="bg-gray-50 p-3 border-b border-gray-200">
+                <h3 className="font-medium text-gray-700">Locais existentes próximos</h3>
+              </div>
+              <div className="divide-y divide-gray-200 max-h-60 overflow-y-auto">
+                {nearbyLocations.map((location) => (
+                  <div key={`nearby-${location.name}`} className="p-3 hover:bg-gray-50">
+                    <h4 className="font-medium text-blue-600">{location.name}</h4>
+                    <p className="text-sm text-gray-600">{location.address}</p>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-xs text-gray-500">
+                        Distância: {Math.round(calculateDistance(
+                          formValues.latitude,
+                          formValues.longitude,
+                          location.latitude,
+                          location.longitude
+                        ))} metros
+                      </span>
+                      <a 
+                        href={`https://wa.me/${location.whatsapp}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+                      >
+                        WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Seção do Formulário */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -292,12 +486,21 @@ export default function Cadastrar() {
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+              className={`w-full sm:w-auto px-6 py-3 font-medium rounded-md flex items-center justify-center gap-2 disabled:opacity-70 ${
+                showDuplicateWarning 
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
             >
               {isSubmitting ? (
                 <>
                   <ClipLoader size={16} color="#ffffff" />
                   <span>Cadastrando...</span>
+                </>
+              ) : showDuplicateWarning ? (
+                <>
+                  <AlertTriangleIcon size={18} />
+                  <span>Cadastrar Mesmo Assim</span>
                 </>
               ) : (
                 <>
@@ -307,12 +510,12 @@ export default function Cadastrar() {
               )}
             </button>
             
-            <Link 
+           {/* <Link 
               to="/localization"
               className="w-full sm:w-auto px-6 py-3 bg-gray-800 text-white font-medium rounded-md hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
             >
               <span>Ver Todos os Locais</span>
-            </Link>
+            </Link> */}
           </div>
         </form>
       </div>
