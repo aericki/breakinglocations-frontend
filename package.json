@@ -11,7 +11,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "host" : "vite --host"
   },
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.11.0",
