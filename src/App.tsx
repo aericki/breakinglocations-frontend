@@ -3,8 +3,7 @@ import  { ThemeProvider } from 'styled-components';
 import { HashRouter as BrowserRouter, Routes, Route  } from "react-router-dom"
 import Home from './pages/Home';
 import Cadastrar from './pages/Cadastro';
-import Localizacao from './pages/Localizacao';
-import Locations from './pages/Localizacao';
+import Localizations from './pages/Localizations';
 
 const App: React.FC = () => {
 
@@ -21,7 +20,7 @@ const App: React.FC = () => {
           <Routes>
             <Route  path="/" element={<Home />} />
             <Route path="/register" element={<Cadastrar/>} />
-            <Route path="/localization" element={<Locations/>} />
+            <Route path="/localization" element={<Localizations/>} />
           </Routes>
         </BrowserRouter>
     </ThemeProvider>

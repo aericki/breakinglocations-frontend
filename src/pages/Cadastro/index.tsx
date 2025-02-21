@@ -125,11 +125,6 @@ export default function Cadastrar() {
           description: 'Não foi possível carregar os locais existentes', 
           color: 'red' 
         });
-      } finally {
-        // Mesmo em caso de erro, terminamos o carregamento após um pequeno delay
-        setTimeout(() => {
-          setIsLoadingLocations(false);
-        }, 1000);
       }
     };
 
@@ -245,7 +240,7 @@ export default function Cadastrar() {
         description: 'Local cadastrado com sucesso!', 
         color: 'green' 
       });
-      setTimeout(() => navigate('/localization'), 2000);
+      navigate('/localization');
     } catch (error) {
       toast({ 
         title: 'Erro', 
