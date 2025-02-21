@@ -6,7 +6,7 @@ import { MapClickEvent } from '@/components/MapClickEvent';
 import useGetLocation from '@/hooks/useGetLocation';
 import { useToast } from '@/hooks/use-toast';
 import { getReverseGeocoding } from '@/api/getReverseGeocoding';
-import { createLocation, fetchAllLocations } from '@/api/locationApi'; // Adicione fetchAllLocations na API
+import { createLocation, fetchAllLocations } from '@/api/locationApi';
 import { Link, useNavigate } from 'react-router-dom';
 import { SyncLoader, ClipLoader } from 'react-spinners';
 import L from 'leaflet';
@@ -27,16 +27,16 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41]
 });
 
-// Ícone para locais já existentes (vermelho para diferenciar)
+// Ícone para locais já existentes
 const existingLocationIcon = L.icon({
-  iconUrl: markerIcon, // Você pode substituir por um ícone vermelho personalizado
+  iconUrl: markerIcon,
   iconRetinaUrl: markerIconRetina,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   tooltipAnchor: [16, -28],
   shadowSize: [41, 41],
-  className: 'existing-marker' // Adiciona classe para estilizar com CSS
+  className: 'existing-marker'
 });
 
 L.Marker.prototype.options.icon = defaultIcon;
@@ -96,12 +96,25 @@ export default function Cadastrar() {
     };
   }, []);
 
+  // Adiciona estilo CSS para os marcadores existentes
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .existing-marker {
+        filter: hue-rotate(140deg) brightness(1.5);
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   // Carrega todos os locais existentes ao montar o componente
   useEffect(() => {
     const loadExistingLocations = async () => {
       try {
         setIsLoadingLocations(true);
-        // Precisamos implementar esta função na API para buscar todos os locais
         const locations = await fetchAllLocations();
         setExistingLocations(locations);
       } catch (error) {
@@ -113,7 +126,10 @@ export default function Cadastrar() {
           color: 'red' 
         });
       } finally {
-        setIsLoadingLocations(false);
+        // Mesmo em caso de erro, terminamos o carregamento após um pequeno delay
+        setTimeout(() => {
+          setIsLoadingLocations(false);
+        }, 1000);
       }
     };
 
@@ -313,55 +329,64 @@ export default function Cadastrar() {
               Selecione a localização no mapa
             </h2>
             <div className="h-full w-full rounded-lg overflow-hidden border border-gray-300">
-              <MapContainer 
-                center={[coords[0], coords[1]]} 
-                zoom={13} 
-                style={{ height: mapHeight, width: '100%' }}
-                className="z-0"
-              >
-                <MapClickEvent onMapClick={handleMapClick} />
-                <TileLayer 
-                  attribution='&copy; OpenStreetMap' 
-                  url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' 
-                />
-                
-                {/* Marcador da nova localização */}
-                {formValues.latitude !== 0 && formValues.longitude !== 0 && (
-                  <Marker position={[formValues.latitude, formValues.longitude]}>
-                    <Popup>
-                      <strong>Nova localização</strong>
-                      <p>{formValues.address}</p>
-                    </Popup>
-                  </Marker>
-                )}
-                
-                {/* Marcadores de locais existentes */}
-                {existingLocations.map((location) => (
-                  <Marker 
-                    key={`existing-${location.name}-${location.latitude}-${location.longitude}`}
-                    position={[location.latitude, location.longitude]}
-                    icon={existingLocationIcon}
-                  >
-                    <Popup>
-                      <div className="p-1">
-                        <h3 className="font-bold text-red-600">{location.name} <span className="text-xs font-normal">(existente)</span></h3>
-                        <p className="text-sm">{location.address}</p>
-                        <p className="text-xs text-gray-600">{location.city}, {location.state}</p>
-                        {formValues.latitude && formValues.longitude && (
-                          <p className="text-xs mt-1 font-medium">
-                            Distância: {Math.round(calculateDistance(
-                              formValues.latitude,
-                              formValues.longitude,
-                              location.latitude,
-                              location.longitude
-                            ))} metros
-                          </p>
-                        )}
-                      </div>
-                    </Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
+              {isLoadingLocations ? (
+                <div style={{ height: mapHeight }} className="w-full flex items-center justify-center bg-gray-100">
+                  <div className="flex flex-col items-center">
+                    <SyncLoader color="#4F46E5" size={15} margin={5} />
+                    <p className="mt-4 text-gray-600">Carregando mapa e localizações...</p>
+                  </div>
+                </div>
+              ) : (
+                <MapContainer 
+                  center={[coords[0], coords[1]]} 
+                  zoom={13} 
+                  style={{ height: mapHeight, width: '100%' }}
+                  className="z-0"
+                >
+                  <MapClickEvent onMapClick={handleMapClick} />
+                  <TileLayer 
+                    attribution='&copy; OpenStreetMap' 
+                    url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' 
+                  />
+                  
+                  {/* Marcador da nova localização */}
+                  {formValues.latitude !== 0 && formValues.longitude !== 0 && (
+                    <Marker position={[formValues.latitude, formValues.longitude]}>
+                      <Popup>
+                        <strong>Nova localização</strong>
+                        <p>{formValues.address}</p>
+                      </Popup>
+                    </Marker>
+                  )}
+                  
+                  {/* Marcadores de locais existentes */}
+                  {existingLocations.map((location) => (
+                    <Marker 
+                      key={`existing-${location.name}-${location.latitude}-${location.longitude}`}
+                      position={[location.latitude, location.longitude]}
+                      icon={existingLocationIcon}
+                    >
+                      <Popup>
+                        <div className="p-1">
+                          <h3 className="font-bold text-red-600">{location.name} <span className="text-xs font-normal">(existente)</span></h3>
+                          <p className="text-sm">{location.address}</p>
+                          <p className="text-xs text-gray-600">{location.city}, {location.state}</p>
+                          {formValues.latitude && formValues.longitude && (
+                            <p className="text-xs mt-1 font-medium">
+                              Distância: {Math.round(calculateDistance(
+                                formValues.latitude,
+                                formValues.longitude,
+                                location.latitude,
+                                location.longitude
+                              ))} metros
+                            </p>
+                          )}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              )}
             </div>
             
             {/* Informações da localização selecionada */}
@@ -485,7 +510,7 @@ export default function Cadastrar() {
           <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">
             <button 
               type="submit" 
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingLocations}
               className={`w-full sm:w-auto px-6 py-3 font-medium rounded-md flex items-center justify-center gap-2 disabled:opacity-70 ${
                 showDuplicateWarning 
                   ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -510,12 +535,12 @@ export default function Cadastrar() {
               )}
             </button>
             
-           {/* <Link 
+            <Link 
               to="/localization"
               className="w-full sm:w-auto px-6 py-3 bg-gray-800 text-white font-medium rounded-md hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
             >
               <span>Ver Todos os Locais</span>
-            </Link> */}
+            </Link>
           </div>
         </form>
       </div>
