@@ -125,9 +125,9 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent md:hidden"></div>
         </div>
         {/* Overlay para Mobile */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:hidden">
-          <h2 className="text-white text-xl font-bold text-center">Comece agora</h2>
-          <p className="text-white text-sm text-center mt-1">
+        <div className="  absolute left-0 right-0 p-4 md:hidden">
+          <h2 className=" text-white text-xl font-bold text-center">Comece agora</h2>
+          <p className=" text-white text-sm text-center mt-1">
             Encontre ou cadastre locais de treino em sua cidade
           </p>
         </div>
