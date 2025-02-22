@@ -1,50 +1,74 @@
-# React + TypeScript + Vite
+# 🏋️ Training Locations Registration Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a project for a breaking training locations registration application, where users can register and view training locations on a map. The application uses hCaptcha to prevent spam and implements a search for municipalities and registered locations via the Nominatim API.
 
-Currently, two official plugins are available:
+## 📋 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Training Locations Registration**: Allows users to register a training location by filling in information like name, address, city, state, and phone.
+- **Location Mapping**: Users can click on the map to set latitude and longitude coordinates. The address is reverse-geocoded to display the corresponding address.
+- **Bot Protection**: hCaptcha implementation to verify user authenticity during registration.
+- **Map Display and Navigation**: View registered locations on an interactive map.
 
-## Expanding the ESLint configuration
+## 🚀 Technologies
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+The main technologies and libraries used in this project are:
 
-- Configure the top-level `parserOptions` property like this:
+- **React** + **TypeScript** for building the interface
+- **React-Leaflet** for map display and interactions
+- **hCaptcha** for bot protection
+- **Axios** for API communication
+- **Tailwind CSS** for styling
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 🔧 Installation
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/aericki/breakinglocations-frontend.git
+    cd breakinglocations-frontend
+    ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+    or 
+    ```bash
+    yarn add && yarn
+    ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+3. Start the frontend in the folder:
+    ```bash
+    npm run dev
+    ```
+
+4. Access the application at `http://localhost:5173`.
+
+## 📌 Usage
+
+### Location Registration
+
+Home Page.
+
+1. Open the registration form.
+2. Click on the map to set the exact location, which will automatically fill in the address.
+3. Fill in the location details, if the address or city does not appear, enter it manually (name, address, city and phone).
+4. Complete the hCaptcha and click "Register."
+
+
+## ⚙️ API Endpoints
+
+- **POST /api/register**: Registers a new training location.
+- **GET /api/locations**: Returns all registered locations.
+
+## 🤝 Contributing
+
+1. Fork the project.
+2. Create a branch for your feature (`git checkout -b feature/new-feature`).
+3. Commit your changes (`git commit -m 'Add new feature'`).
+4. Push to the branch (`git push origin feature/new-feature`).
+5. Open a Pull Request.
+
+---
+
+Created by [Aéricki Ferreira](https://github.com/aericki) with 💙  
+Instagram: [@aery_abc](https://www.instagram.com/aerickiferreira)
