@@ -17,17 +17,14 @@ The main technologies and libraries used in this project are:
 - **React-Leaflet** for map display and interactions
 - **hCaptcha** for bot protection
 - **Axios** for API communication
-- **Styled Components** and **Tailwind CSS** for styling
-- **Express**, **Node.js** for the backend
-- **Prisma** ORM for database management
-- **Shadcn** for some UI components
+- **Tailwind CSS** for styling
 
 ## 🔧 Installation
 
 1. Clone the repository:
     ```bash
     git clone https://github.com/aericki/breakinglocations-frontend.git
-    cd breaking-locations
+    cd breakinglocations-frontend
     ```
 
 2. Install dependencies:
@@ -39,26 +36,12 @@ The main technologies and libraries used in this project are:
     yarn add && yarn
     ```
 
-3. Configure the `.env` file with the following variables:
-
-    ```
-    DATABASE_URL="SQLITE or your preferred backend"
-    ```
-
-4. Run Prisma migration:
-
-    In the backend folder:
-
-    ```bash
-    npx prisma migrate dev --name init
-    ```
-
-5. Start the frontend in the folder:
+3. Start the frontend in the folder:
     ```bash
     npm run dev
     ```
 
-6. Access the application at `http://localhost:5173`.
+4. Access the application at `http://localhost:5173`.
 
 ## 📌 Usage
 
