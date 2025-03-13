@@ -12,7 +12,8 @@ export interface Location {
 }
 
 export const api = Axios.create({
-  baseURL: "https://breaking-locations-production.up.railway.app/"
+  //Adicionar o VITE_API_URL aqui
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 export const fetchLocations = async (city: string = '') => {
