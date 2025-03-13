@@ -222,7 +222,7 @@ const Localization = () => {
                       href={`https://wa.me/${location.whatsapp}`}
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="block bg-green-600 text-white text-center py-1 px-2 rounded mt-2 hover:bg-green-700 transition-colors"
+                      className="block bg-green-600 !text-white text-center py-1 px-2 rounded mt-2 hover:bg-green-700 transition-colors"
                     >
                       Contato via WhatsApp
                     </a>
@@ -231,7 +231,7 @@ const Localization = () => {
                       href={`https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`}
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="block bg-blue-600 text-white text-center py-1 px-2 rounded mt-1 hover:bg-blue-700 transition-colors"
+                      className="block bg-blue-600 !text-white text-center py-1 px-2 rounded mt-1 hover:bg-blue-700 transition-colors"
                     >
                       Como chegar
                     </a>
