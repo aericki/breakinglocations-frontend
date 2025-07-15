@@ -1,6 +1,6 @@
 // src/pages/Locations/index.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom'; // Import Link
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { fetchLocations } from '@/api/locationApi';
 import 'leaflet/dist/leaflet.css';
@@ -136,16 +136,9 @@ const LocationsPage = () => {
                       <h3 className="font-bold text-lg text-blue-700 mb-1">{location.name}</h3>
                       <p className="text-gray-700 mb-1">{location.address}</p>
                       <p className="text-gray-600 mb-2">{location.city}, {location.state}</p>
-                      {user && location.whatsapp && (
-                        <a 
-                          href={`https://wa.me/${location.whatsapp.replace(/\D/g, '')}`}
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="block bg-green-500 text-white text-center py-1 px-2 rounded mt-2 hover:bg-green-600 transition-colors"
-                        >
-                          Contato via WhatsApp
-                        </a>
-                      )}
+                      <Link to={`/locations/${location.id}`} className="block bg-purple-600 text-white text-center py-1 px-2 rounded mt-2 hover:bg-purple-700 transition-colors">
+                        Ver Detalhes
+                      </Link>
                       <a 
                         href={`https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`}
                         target="_blank" 

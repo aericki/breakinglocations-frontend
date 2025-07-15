@@ -1,10 +1,10 @@
 // src/components/Header.tsx
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { auth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
-import { Button } from './ui/button';
-import { LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { Button } from "./ui/button";
+import { LogOut, LogIn, UserPlus, MapPin, User } from "lucide-react";
 
 export function Header() {
   const { user } = useAuth();
@@ -13,7 +13,7 @@ export function Header() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/login'); // Redirect to login after logout
+      navigate("/login"); // Redirect to login after logout
     } catch (error) {
       console.error("Failed to log out", error);
     }
@@ -22,17 +22,12 @@ export function Header() {
   return (
     <header className="bg-background shadow-sm sticky top-0 z-40">
       <div className="container mx-auto flex h-16 items-center justify-between p-4">
-        <Link to="/" className="text-2xl font-bold text-primary">
-          BreakingLocations
-        </Link>
-        <nav className="flex items-center gap-6 text-sm font-medium">
-          <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">
-            Home
+        <div className="flex items-center gap-2">
+          <MapPin className="mr-2 h-4 w-4" />
+          <Link to="/" className="text-2xl font-bold text-primary">
+            BreakingLocations
           </Link>
-          <Link to="/localization" className="text-muted-foreground transition-colors hover:text-foreground">
-            Locations
-          </Link>
-        </nav>
+        </div>
 
         <div className="flex items-center gap-4">
           {user ? (
@@ -42,6 +37,12 @@ export function Header() {
               </span>
               <Link to="/add-location">
                 <Button>Adicionar Local</Button>
+              </Link>
+              <Link to={`/profile/${user.uid}`}>
+                <Button variant="ghost" size="icon" title="Meu Perfil">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Meu Perfil</span>
+                </Button>
               </Link>
               <Button size="icon" variant="ghost" onClick={handleLogout}>
                 <LogOut className="h-5 w-5" />

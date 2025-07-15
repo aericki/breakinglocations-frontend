@@ -13,6 +13,8 @@ import { LoginPage } from './pages/Login';
 import { ForgotPasswordPage } from './pages/ForgotPassword';
 import Localization from './pages/Locations';
 import AddLocationPage from './pages/AddLocation';
+import LocationDetailPage from './pages/LocationDetail'; // Import the new page
+import UserProfilePage from './pages/Profile';
 // import EditLocationPage from './pages/EditLocation';
 
 
@@ -30,7 +32,9 @@ const App: React.FC = () => {
           <Route element={<Layout />}>
             {/* --- Public Routes --- */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/localization" element={<Localization />} />
+            <Route path="/locations" element={<Localization />} />
+            <Route path="/locations/:id" element={<LocationDetailPage />} /> {/* Add detail page route */}
+            <Route path="/profile/:id" element={<UserProfilePage />} />
 
             {/* --- Protected Routes within Layout --- */}
             <Route element={<ProtectedRoute />}>

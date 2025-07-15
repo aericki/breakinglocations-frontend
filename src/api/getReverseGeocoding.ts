@@ -1,4 +1,6 @@
-export const getReverseGeocoding = async (lat: number, lng: number): Promise<any> => {
+import { NominatimReverseGeocodingResponse } from '@/types';
+
+export const getReverseGeocoding = async (lat: number, lng: number): Promise<NominatimReverseGeocodingResponse> => {
   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
 
   try {
@@ -14,7 +16,6 @@ export const getReverseGeocoding = async (lat: number, lng: number): Promise<any
     }
 
     const data = await response.json();
-    console.log('Reverse geocoding response:', data);
     return data;
 
   } catch (error) {
