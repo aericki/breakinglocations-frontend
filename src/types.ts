@@ -1,14 +1,27 @@
 // src/types.ts
 export interface Location {
-  id: string;
+  id: number;
   name: string;
-  whatsapp: string;
-  state: string;
-  country: string;
   latitude: number;
   longitude: number;
   address: string;
-  city: string; // Adiciona a propriedade 'city' para compatibilidade com LocationList
+  city: string;
+  state: string;
+  country: string;
+  whatsapp?: string;
+  userId: string;
+  distance?: number;
+}
+
+export interface NewLocationData {
+  name: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  whatsapp?: string;
 }
 
 export interface LocationListProps {
@@ -24,4 +37,3 @@ export interface LocationMapProps {
 export type SearchBarProps = {
   onSearch: (city: string) => void;
 };
-

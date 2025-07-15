@@ -1,22 +1,24 @@
-import axios from 'axios';
+export const getReverseGeocoding = async (lat: number, lng: number): Promise<any> => {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
 
-// Configura a base da API com Nominatim do OpenStreetMap
-export const api = axios.create({
-  baseURL: 'https://nominatim.openstreetmap.org/reverse',
-});
-
-export const getReverseGeocoding = async (lat: number, lng: number) => {
   try {
-    const response = await api.get('', {
-      params: {
-        format: 'jsonv2',
-        lat,
-        lon: lng, // Usa-se `lon` para longitude em vez de `lng`
-      },
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'BreakingLocationsApp/1.0' // Nominatim requires a User-Agent
+      }
     });
-    return response.data;
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch reverse geocoding data. Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Reverse geocoding response:', data);
+    return data;
+
   } catch (error) {
-    console.error('Erro ao obter endereço:', error);
-    throw error;
+    console.error("Error in getReverseGeocoding:", error);
+    throw error; // Re-throw the error to be caught by the caller
   }
 };

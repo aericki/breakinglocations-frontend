@@ -18,20 +18,17 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState<string[]>(options);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Filtra as opções baseado no termo de pesquisa
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = options.filter(option => 
+  // Garante que 'options' seja sempre um array
+  const validOptions = Array.isArray(options) ? options : [];
+
+  // Filtra as opções baseado no termo de pesquisa diretamente no render
+  const filteredOptions = searchTerm
+    ? validOptions.filter(option =>
         option.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    } else {
-      setFilteredOptions(options);
-    }
-  }, [searchTerm, options]);
+      )
+    : validOptions;
 
   // Fecha o dropdown quando clica fora
   useEffect(() => {
@@ -55,8 +52,8 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      {/* Campo de pesquisa/seleção atual */}
-      <div 
+      {/* Campo de seleção atual */}
+      <div
         className="bg-gray-100 border border-gray-200 rounded flex items-center justify-between p-2 cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -64,10 +61,10 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
           {value || placeholder}
         </div>
         <div className="flex-shrink-0 ml-2">
-          <svg 
-            className={`h-5 w-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
-            fill="none" 
-            viewBox="0 0 24 24" 
+          <svg
+            className={`h-5 w-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            viewBox="0 0 24 24"
             stroke="currentColor"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

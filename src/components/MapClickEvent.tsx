@@ -1,15 +1,16 @@
-// MapClickEvent.tsx
+// src/components/MapClickEvent.tsx
 import { useMapEvents } from 'react-leaflet';
+import { LatLng } from 'leaflet';
 
 interface MapClickEventProps {
-  onMapClick: (lat: number, lng: number) => void;
+  onMapClick: (latlng: LatLng) => void;
 }
 
 export function MapClickEvent({ onMapClick }: MapClickEventProps) {
   useMapEvents({
-    click: async (e) => {
-      const { lat, lng } = e.latlng;
-      onMapClick(lat, lng);
+    click: (e) => {
+      // Passa o objeto latlng inteiro, em vez de desestruturá-lo
+      onMapClick(e.latlng);
     },
   });
   return null;

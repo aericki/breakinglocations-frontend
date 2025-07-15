@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
-import { Toaster } from './components/ui/toaster';
+import { AuthProvider } from './contexts/AuthContext'; // Import the AuthProvider
+import './utils/leaflet-icons'; // Configuração global dos ícones do Leaflet
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
-    <Toaster />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </React.StrictMode>
 );

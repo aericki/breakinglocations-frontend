@@ -1,44 +1,74 @@
-import Axios from 'axios'
+import Axios from 'axios';
+import { User } from 'firebase/auth';
 
-export interface Location {
-  name: string
-  latitude: number
-  longitude: number
-  address: string
-  city: string
-  state: string
-  country: string
-  whatsapp: string
-}
+import { Location, NewLocationData } from '@/types';
 
 export const api = Axios.create({
-  //Adicionar o VITE_API_URL aqui
   baseURL: import.meta.env.VITE_API_URL
 });
 
-export const fetchLocations = async (city: string = '') => {
+export const fetchLocations = async (user: User | null, city: string = ''): Promise<Location[]> => {
+  const headers: any = {};
+  if (user) {
+    const token = await user.getIdToken();
+    headers.Authorization = `Bearer ${token}`;
+  }
   const response = await api.get('/api/locations', {
-    params: {
-      city
-    }
-  })
+    params: { city },
+    headers,
+  });
   return response.data;
 }
 
-export const createLocation = async (locationData: Location) => {
-  const response = await api.post('/api/locations', locationData);
-  return response.data
+export const createLocation = async (locationData: NewLocationData, user: User): Promise<Location> => {
+  const token = await user.getIdToken();
+  const response = await api.post('/api/locations', locationData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
 }
 
-export const fetchCities = async () => {
-  const response = await api.get('/api/locations/cities');
+export const deleteLocation = async (locationId: number, user: User): Promise<void> => {
+  const token = await user.getIdToken();
+  await api.delete(`/api/locations/${locationId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}
+
+export const updateLocation = async (locationId: number, locationData: NewLocationData, user: User): Promise<Location> => {
+  const token = await user.getIdToken();
+  const response = await api.put(`/api/locations/${locationId}`, locationData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+}
+
+export const fetchCities = async (user: User | null) => {
+  const headers: any = {};
+  if (user) {
+    const token = await user.getIdToken();
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await api.get('/api/locations/cities', {
+    headers,
+  });
   return response.data;
 };
 
-// Nova função para buscar todos os locais cadastrados
-export const fetchAllLocations = async () => {
-  // Como não há um endpoint específico para todos os locais,
-  // podemos buscar sem filtro de cidade para obter todos
-  const response = await api.get('/api/locations');
+export const fetchAllLocations = async (user: User | null): Promise<Location[]> => {
+  const headers: any = {};
+  if (user) {
+    const token = await user.getIdToken();
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await api.get('/api/locations', {
+    headers,
+  });
   return response.data;
 };
