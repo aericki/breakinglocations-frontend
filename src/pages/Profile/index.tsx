@@ -1,38 +1,84 @@
 // src/pages/Profile/index.tsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { User } from '@/types'; // Assuming you have a User type with locations
-import { api } from '@/api/locationApi'; // Assuming you have an API utility
+import { User } from '@/types';
+import { api } from '@/api/locationApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const UserProfilePage = () => {
   const { id } = useParams<{ id: string }>();
-  const [user, setUser] = useState<User | null>(null);
+  const { firebaseUser, appUser, loading: authLoading, refreshAppUser } = useAuth();
+  const { toast } = useToast();
+
+  const [profileUser, setProfileUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    bio: '',
+  });
+
+  const fetchUserProfile = async () => {
+    if (!id || authLoading) return; // Wait for auth to load
+
+    try {
+      setLoading(true);
+      const headers: Record<string, string> = {};
+      if (firebaseUser) {
+        const token = await firebaseUser.getIdToken();
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await api.get(`/api/users/${id}`, { headers }); 
+      setProfileUser(response.data);
+      setEditForm({ name: response.data.name, bio: response.data.bio || '' });
+    } catch (err) {
+      setError('Failed to fetch user profile.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        // You might need to create a new function in your api utility for this
-        const response = await api.get(`/api/users/${id}`); 
-        setUser(response.data);
-      } catch (err) {
-        setError('Failed to fetch user profile.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchUserProfile();
+  }, [id, firebaseUser, authLoading]);
 
-    if (id) {
-      fetchUserProfile();
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firebaseUser || !profileUser) return;
+
+    try {
+      const token = await firebaseUser.getIdToken();
+      const response = await api.put(`/api/users/${profileUser.id}`, editForm, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setProfileUser(response.data);
+      toast({ title: 'Sucesso', description: 'Perfil atualizado com sucesso!' });
+      setIsEditing(false);
+      refreshAppUser(); // Refresh the appUser in AuthContext
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível atualizar o perfil.' });
     }
-  }, [id]);
+  };
 
-  if (loading) {
+  if (loading || authLoading) {
     return <div className="text-center py-10">Loading profile...</div>;
   }
 
@@ -40,35 +86,67 @@ const UserProfilePage = () => {
     return <div className="text-center py-10 text-red-500">{error}</div>;
   }
 
-  if (!user) {
+  if (!profileUser) {
     return <div className="text-center py-10">User not found.</div>;
   }
+
+  const isOwnProfile = firebaseUser && appUser && firebaseUser.uid === appUser.id;
 
   return (
     <div className="container mx-auto p-4">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={user.profilePictureUrl} alt={user.name} />
-              <AvatarFallback>{user.name?.[0].toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-2xl">{user.name}</CardTitle>
-              <p className="text-muted-foreground">{user.email}</p>
+          <div className="flex items-center justify-between space-x-4">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={profileUser.profilePictureUrl} alt={profileUser.name} />
+                <AvatarFallback>{profileUser.name?.[0]?.toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-2xl">{profileUser.name}</CardTitle>
+                <p className="text-muted-foreground">{profileUser.email}</p>
+              </div>
             </div>
+            {isOwnProfile && (
+              <Dialog open={isEditing} onOpenChange={setIsEditing}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Editar Perfil</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Editar Perfil</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleEditSubmit} className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <label htmlFor="name" className="text-right">Nome</label>
+                      <Input id="name" name="name" value={editForm.name} onChange={handleEditChange} className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <label htmlFor="bio" className="text-right">Bio</label>
+                      <Textarea id="bio" name="bio" value={editForm.bio} onChange={handleEditChange} className="col-span-3" />
+                    </div>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button type="button" variant="outline">Cancelar</Button>
+                      </DialogClose>
+                      <Button type="submit">Salvar mudanças</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
-          {user.bio && (
+          {profileUser.bio && (
             <CardContent className="pt-4">
-              <p>{user.bio}</p>
+              <p>{profileUser.bio}</p>
             </CardContent>
           )}
         </CardHeader>
         <CardContent>
           <h3 className="text-xl font-semibold mb-4">Registered Locations</h3>
-          {user.locations && user.locations.length > 0 ? (
+          {profileUser.locations && profileUser.locations.length > 0 ? (
             <ul className="space-y-2">
-              {user.locations.map((location) => (
+              {profileUser.locations.map((location) => (
                 <li key={location.id} className="border p-3 rounded-md hover:bg-gray-50">
                   <Link to={`/locations/${location.id}`} className="font-medium text-blue-600 hover:underline">
                     {location.name}

@@ -1,4 +1,5 @@
 // src/components/Header.tsx
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { auth } from "@/lib/firebase";
@@ -7,8 +8,25 @@ import { Button } from "./ui/button";
 import { LogOut, LogIn, UserPlus, MapPin, User } from "lucide-react";
 
 export function Header() {
-  const { user } = useAuth();
+  const { firebaseUser, appUser } = useAuth();
   const navigate = useNavigate();
+
+  // Estado para mostrar/esconder o header
+  const [showHeader, setShowHeader] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current) {
+        setShowHeader(false); // Rolando para baixo
+      } else {
+        setShowHeader(true); // Rolando para cima
+      }
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -20,7 +38,11 @@ export function Header() {
   };
 
   return (
-    <header className="bg-background shadow-sm sticky top-0 z-40">
+    <header
+      className={`bg-white shadow-sm sticky top-0 z-40 transition-transform duration-300 ${
+        showHeader ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container mx-auto flex h-16 items-center justify-between p-4">
         <div className="flex items-center gap-2">
           <MapPin className="mr-2 h-4 w-4" />
@@ -30,15 +52,15 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-          {user ? (
+          {firebaseUser ? (
             <>
               <span className="text-sm text-muted-foreground hidden sm:inline">
-                Olá, {user.displayName || user.email}
+                Olá, {appUser?.name || appUser?.email}
               </span>
               <Link to="/add-location">
                 <Button>Adicionar Local</Button>
               </Link>
-              <Link to={`/profile/${user.uid}`}>
+              <Link to={`/profile/${firebaseUser.uid}`}>
                 <Button variant="ghost" size="icon" title="Meu Perfil">
                   <User className="h-5 w-5" />
                   <span className="sr-only">Meu Perfil</span>

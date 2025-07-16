@@ -19,7 +19,7 @@ import MapInstructionOverlay from "./MapInstructionOverlay";
 
 const AddLocationPage: React.FC = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { firebaseUser } = useAuth();
   const navigate = useNavigate();
   const { coordinates: userLocation, error: geolocationError } =
     useGeolocation();
@@ -113,11 +113,11 @@ const AddLocationPage: React.FC = () => {
   }, [userLocation, geolocationError, initialMapCenterSet, toast]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!firebaseUser) return;
     const loadExistingLocations = async () => {
       try {
         setIsLoadingLocations(true);
-        const locations = await fetchAllLocations(user);
+        const locations = await fetchAllLocations(firebaseUser);
         setExistingLocations(locations);
       } catch (error) {
         console.error("Erro ao carregar locais existentes:", error);
@@ -131,7 +131,7 @@ const AddLocationPage: React.FC = () => {
       }
     };
     loadExistingLocations();
-  }, [user, toast]);
+  }, [firebaseUser, toast]);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -176,7 +176,7 @@ const AddLocationPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !markerPosition) {
+    if (!firebaseUser || !markerPosition) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -201,7 +201,7 @@ const AddLocationPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await createLocation(formValues, user);
+      await createLocation(formValues, firebaseUser);
       toast({
         title: "Sucesso!",
         description: "Local cadastrado com sucesso.",

@@ -1,21 +1,21 @@
 // src/pages/Locations/index.tsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, Link } from 'react-router-dom'; // Import Link
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { fetchLocations } from '@/api/locationApi';
-import 'leaflet/dist/leaflet.css';
-import { Location } from '@/types';
-import { LatLngExpression } from 'leaflet';
-import { SearchIcon, Loader2Icon } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useCallback } from "react";
+import { useSearchParams, Link } from "react-router-dom"; // Import Link
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { fetchLocations } from "@/api/locationApi";
+import "leaflet/dist/leaflet.css";
+import { Location } from "@/types";
+import { LatLngExpression } from "leaflet";
+import { SearchIcon, Loader2Icon } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 // --- Configuração dos Ícones do Leaflet ---
-import L from 'leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import L from "leaflet";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 const DefaultIcon = L.icon({
   iconUrl: icon,
@@ -37,42 +37,59 @@ const FlyToLocation: React.FC<{ center: LatLngExpression }> = ({ center }) => {
 // --- Componente Principal da Página ---
 const LocationsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('city') || '');
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("city") || ""
+  );
   const [locations, setLocations] = useState<Location[]>([]);
-  const [mapCenter, setMapCenter] = useState<LatLngExpression>([-14.235, -51.925]);
+  const [mapCenter, setMapCenter] = useState<LatLngExpression>([
+    -14.235, -51.925,
+  ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>('Digite uma cidade para começar a busca.');
+  const [message, setMessage] = useState<string | null>(
+    "Digite uma cidade para começar a busca."
+  );
 
-  const { user } = useAuth();
+  const { firebaseUser } = useAuth();
   const { toast } = useToast();
 
-  const handleSearch = useCallback(async (city: string) => {
-    if (!city.trim()) {
-      toast({ variant: 'destructive', title: 'Atenção', description: 'Por favor, digite o nome da cidade.' });
-      return;
-    }
-    setIsLoading(true);
-    setMessage(null);
-    setLocations([]);
-    setSearchParams({ city: city });
-    try {
-      const data = await fetchLocations(user, city);
-      setLocations(data);
-      if (data.length === 0) {
-        setMessage('Nenhuma localização encontrada para esta cidade.');
-      } else {
-        setMapCenter([data[0].latitude, data[0].longitude]);
+  const handleSearch = useCallback(
+    async (city: string) => {
+      if (!city.trim()) {
+        toast({
+          variant: "destructive",
+          title: "Atenção",
+          description: "Por favor, digite o nome da cidade.",
+        });
+        return;
       }
-    } catch (error) {
-      console.error("Erro ao buscar localizações:", error);
-      toast({ variant: 'destructive', title: 'Erro', description: 'Ocorreu um erro ao buscar as localizações.' });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user, toast, setSearchParams]);
+      setIsLoading(true);
+      setMessage(null);
+      setLocations([]);
+      setSearchParams({ city: city });
+      try {
+        const data = await fetchLocations(firebaseUser, city);
+        setLocations(data);
+        if (data.length === 0) {
+          setMessage("Nenhuma localização encontrada para esta cidade.");
+        } else {
+          setMapCenter([data[0].latitude, data[0].longitude]);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar localizações:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "Ocorreu um erro ao buscar as localizações.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [firebaseUser, toast, setSearchParams]
+  );
 
   useEffect(() => {
-    const city = searchParams.get('city');
+    const city = searchParams.get("city");
     if (city) {
       setSearchQuery(city);
       handleSearch(city);
@@ -97,22 +114,38 @@ const LocationsPage = () => {
               className="w-full"
             />
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? <Loader2Icon className="animate-spin" size={16} /> : <SearchIcon size={16} />}
-              <span>{isLoading ? 'Pesquisando...' : 'Pesquisar'}</span>
+              {isLoading ? (
+                <Loader2Icon className="animate-spin" size={16} />
+              ) : (
+                <SearchIcon size={16} />
+              )}
+              <span>{isLoading ? "Pesquisando..." : "Pesquisar"}</span>
             </Button>
           </form>
 
           <div className="mt-6">
             {locations.length > 0 && (
-              <h2 className="text-xl font-semibold mb-3">Resultados ({locations.length})</h2>
+              <h2 className="text-xl font-semibold mb-3">
+                Resultados ({locations.length})
+              </h2>
             )}
             <div className="space-y-4">
               {locations.map((location) => (
-                <div key={location.id} className="bg-gray-50 p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer" onClick={() => setMapCenter([location.latitude, location.longitude])}>
-                  <h3 className="font-bold text-md text-blue-700">{location.name}</h3>
+                <div
+                  key={location.id}
+                  className="bg-gray-50 p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() =>
+                    setMapCenter([location.latitude, location.longitude])
+                  }
+                >
+                  <h3 className="font-bold text-md text-blue-700">
+                    {location.name}
+                  </h3>
                   <p className="text-sm text-gray-600">{location.address}</p>
-                  {user && location.whatsapp && (
-                    <p className="text-sm text-gray-600">WhatsApp: {location.whatsapp}</p>
+                  {firebaseUser && location.whatsapp && (
+                    <p className="text-sm text-gray-600">
+                      WhatsApp: {location.whatsapp}
+                    </p>
                   )}
                 </div>
               ))}
@@ -126,24 +159,41 @@ const LocationsPage = () => {
               <Loader2Icon className="animate-spin text-blue-600" size={48} />
             </div>
           ) : (
-            <MapContainer center={mapCenter} zoom={locations.length > 0 ? 12 : 4} style={{ height: '100%', width: '100%' }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
+            <MapContainer
+              center={mapCenter}
+              zoom={locations.length > 0 ? 12 : 4}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap"
+              />
               {locations.length > 0 && <FlyToLocation center={mapCenter} />}
               {locations.map((location) => (
-                <Marker key={location.id} position={[location.latitude, location.longitude]}>
+                <Marker
+                  key={location.id}
+                  position={[location.latitude, location.longitude]}
+                >
                   <Popup>
                     <div className="p-1">
-                      <h3 className="font-bold text-lg text-blue-700 mb-1">{location.name}</h3>
+                      <h3 className="font-bold text-lg text-blue-700 mb-1">
+                        {location.name}
+                      </h3>
                       <p className="text-gray-700 mb-1">{location.address}</p>
-                      <p className="text-gray-600 mb-2">{location.city}, {location.state}</p>
-                      <Link to={`/locations/${location.id}`} className="block bg-purple-600 text-white text-center py-1 px-2 rounded mt-2 hover:bg-purple-700 transition-colors">
+                      <p className="text-gray-600 mb-2">
+                        {location.city}, {location.state}
+                      </p>
+                      <Link
+                        to={`/locations/${location.id}`}
+                        className="block bg-purple-600 !text-white text-center py-1.5 px-3 rounded-lg mt-2 font-semibold shadow hover:bg-purple-700 transition-colors"
+                      >
                         Ver Detalhes
                       </Link>
-                      <a 
+                      <a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`}
-                        target="_blank" 
+                        target="_blank"
                         rel="noopener noreferrer"
-                        className="block bg-blue-500 text-white text-center py-1 px-2 rounded mt-1 hover:bg-blue-600 transition-colors"
+                        className="block bg-blue-600 !text-white text-center py-1.5 px-3 rounded-lg mt-2 font-semibold shadow hover:bg-blue-700 transition-colors"
                       >
                         Como chegar
                       </a>

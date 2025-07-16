@@ -1,18 +1,24 @@
 // src/contexts/AuthContext.tsx
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { api } from '@/api/locationApi'; // Assuming api is exported from here
+import { User as AppUser } from '@/types'; // Your backend user type
 
 // Define the shape of the context data
 interface AuthContextType {
-  user: User | null;
+  firebaseUser: FirebaseUser | null; // The user object from Firebase Auth
+  appUser: AppUser | null; // The user object from your backend
   loading: boolean;
+  refreshAppUser: () => Promise<void>; // Function to manually refresh appUser
 }
 
 // Create the context with a default value
 const AuthContext = createContext<AuthContextType>({
-  user: null,
+  firebaseUser: null,
+  appUser: null,
   loading: true,
+  refreshAppUser: async () => {},
 });
 
 // Create a provider component
@@ -21,23 +27,49 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [appUser, setAppUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchAppUser = useCallback(async (user: FirebaseUser) => {
+    try {
+      const token = await user.getIdToken();
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await api.get(`/api/users/${user.uid}`, { headers });
+      setAppUser(response.data);
+    } catch (error) {
+      console.error("Error fetching app user profile:", error);
+      setAppUser(null); // Clear appUser if fetch fails
+    }
+  }, []);
+
+  const refreshAppUser = useCallback(async () => {
+    if (firebaseUser) {
+      await fetchAppUser(firebaseUser);
+    }
+  }, [firebaseUser, fetchAppUser]);
+
   useEffect(() => {
-    // onAuthStateChanged returns an unsubscribe function
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setFirebaseUser(currentUser);
+      if (currentUser) {
+        await fetchAppUser(currentUser);
+      } else {
+        setAppUser(null); // Clear appUser if no Firebase user
+      }
       setLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, []);
+  }, [fetchAppUser]);
 
   const value = {
-    user,
+    firebaseUser,
+    appUser,
     loading,
+    refreshAppUser,
   };
 
   return (

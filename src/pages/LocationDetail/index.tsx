@@ -114,7 +114,7 @@ const RatingModal = ({
 
 const LocationDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { user: currentUser } = useAuth();
+  const { firebaseUser: currentUser } = useAuth();
   const { toast } = useToast();
 
   const [location, setLocation] = useState<LocationDetail | null>(null);

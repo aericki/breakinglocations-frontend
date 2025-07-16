@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { firebaseUser } = useAuth();
   const navigate = useNavigate();
   const [recentLocations, setRecentLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +19,7 @@ export default function HomePage() {
     const loadRecentLocations = async () => {
       try {
         setIsLoading(true);
-        const locations = await fetchAllLocations(user);
+        const locations = await fetchAllLocations(firebaseUser);
         // Sort by ID descending to get the most recent ones
         const sortedLocations = locations
           .sort((a, b) => b.id - a.id)
@@ -32,7 +32,7 @@ export default function HomePage() {
       }
     };
     loadRecentLocations();
-  }, [user]);
+  }, [firebaseUser]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

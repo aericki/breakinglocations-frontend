@@ -4,14 +4,14 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 const ProtectedRoute: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { firebaseUser, loading } = useAuth();
 
   if (loading) {
     // You can add a loading spinner here if you want
     return <div>Carregando...</div>;
   }
 
-  if (!user) {
+  if (!firebaseUser) {
     // User is not authenticated, redirect to login page
     return <Navigate to="/login" replace />;
   }
