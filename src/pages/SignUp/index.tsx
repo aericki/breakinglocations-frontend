@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,14 +29,29 @@ export function SignUpPage() {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast({
+        title: "Erro",
+        description: "As senhas não conferem.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      toast({ title: "Conta criada com sucesso!", description: "Você já pode fazer o login." });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCredential.user);
+      
+      toast({ 
+        title: "Conta criada com sucesso!", 
+        description: "Enviamos um link de verificação para o seu e-mail." 
+      });
+      
       navigate("/login");
     } catch (error) {
       toast({
@@ -81,6 +96,17 @@ export function SignUpPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirm-password">Confirmar Senha</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
               />
             </div>
