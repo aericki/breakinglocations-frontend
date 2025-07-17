@@ -288,9 +288,9 @@ const LocationDetailPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 z-10 relative">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight">{location.name}</h1>
-        <p className="text-lg text-muted-foreground mt-2">{location.address}</p>
+      <header className="mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{location.name}</h1>
+        <p className="text-md sm:text-lg text-muted-foreground mt-2">{location.address}</p>
         <p className="text-sm text-muted-foreground">
           {location.city}, {location.state}
         </p>
@@ -305,12 +305,12 @@ const LocationDetailPage: React.FC = () => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           {/* Mapa primeiro */}
           <section>
             <h2 className="text-2xl font-semibold mb-4">Mapa</h2>
-            <div className="h-96 bg-muted rounded-lg overflow-hidden z-0">
+            <div className="h-80 sm:h-96 bg-muted rounded-lg overflow-hidden z-0">
               <MapContainer
                 center={mapPosition}
                 zoom={15}
@@ -325,15 +325,15 @@ const LocationDetailPage: React.FC = () => {
           </section>
           {/* Fotos depois */}
           <section>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
               <h2 className="text-2xl font-semibold">Fotos</h2>
               {currentUser && (
-                <Button onClick={handleAddPhoto}>
+                <Button onClick={handleAddPhoto} size="sm">
                   <Camera className="mr-2 h-4 w-4" /> Adicionar Foto
                 </Button>
               )}
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {location.photos.length > 0 ? (
                 location.photos.map((photo) => (
                   <div
@@ -348,8 +348,8 @@ const LocationDetailPage: React.FC = () => {
                   </div>
                 ))
               ) : (
-                <div className="col-span-full bg-muted rounded-lg aspect-video flex items-center justify-center">
-                  <p className="text-muted-foreground text-sm">
+                <div className="col-span-full bg-muted rounded-lg aspect-[16/9] sm:aspect-video flex items-center justify-center">
+                  <p className="text-muted-foreground text-sm p-4 text-center">
                     Nenhuma foto ainda. Seja o primeiro a adicionar!
                   </p>
                 </div>
@@ -358,12 +358,12 @@ const LocationDetailPage: React.FC = () => {
           </section>
         </div>
 
-        <div className="space-y-8">
-          <section className="p-6 border rounded-lg shadow-sm">
-            <h2 className="text-2xl font-semibold mb-4">Avaliações</h2>
+        <div className="space-y-6 sm:space-y-8">
+          <section className="p-4 sm:p-6 border rounded-lg shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">Avaliações</h2>
             <div className="flex items-center gap-4">
               <div className="text-center">
-                <span className="text-5xl font-bold">
+                <span className="text-4xl sm:text-5xl font-bold">
                   {location.overallAverage.toFixed(1)}
                 </span>
                 <span className="text-muted-foreground">/ 5</span>
@@ -414,9 +414,9 @@ const LocationDetailPage: React.FC = () => {
             )}
           </section>
 
-          <section className="p-6 border rounded-lg shadow-sm">
+          <section className="p-4 sm:p-6 border rounded-lg shadow-sm">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold">Likes</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold">Likes</h2>
               {currentUser && (
                 <Button
                   variant="ghost"
@@ -438,8 +438,8 @@ const LocationDetailPage: React.FC = () => {
             </div>
           </section>
 
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">
+          <section className="p-4 sm:p-6 border rounded-lg shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">
               Comentários ({location.comments.length})
             </h2>
             {currentUser && (
@@ -475,7 +475,7 @@ const LocationDetailPage: React.FC = () => {
                           {new Date(comment.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <p className="text-sm">{comment.text}</p>
+                      <p className="text-sm break-words">{comment.text}</p>
                     </div>
                   </div>
                 ))

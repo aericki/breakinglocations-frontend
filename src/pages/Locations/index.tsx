@@ -102,49 +102,48 @@ const LocationsPage = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
-      <aside className="w-full md:w-1/3 lg:w-1/4 p-2 sm:p-4 bg-white border-r border-gray-200 overflow-y-auto">
-        <form onSubmit={onSearchSubmit} className="flex flex-col gap-3">
+    <div className="flex flex-col lg:flex-row h-screen bg-background">
+      {/* Sidebar */}
+      <aside className="w-full lg:w-1/3 xl:w-1/4 p-4 sm:p-6 bg-white border-r overflow-y-auto">
+        <form onSubmit={onSearchSubmit} className="flex flex-col sm:flex-row gap-2 mb-6">
           <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Digite o nome da cidade"
-            className="w-full"
+            className="flex-grow"
           />
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
             {isLoading ? (
-              <Loader2Icon className="animate-spin" size={16} />
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              <SearchIcon size={16} />
+              <SearchIcon className="mr-2 h-4 w-4" />
             )}
-            <span>{isLoading ? "Pesquisando..." : "Pesquisar"}</span>
+            <span>{isLoading ? "Buscando..." : "Buscar"}</span>
           </Button>
         </form>
 
-        <div className="mt-6">
+        <div>
           {locations.length > 0 && (
-            <h2 className="text-xl font-semibold mb-3">
+            <h2 className="text-xl font-semibold mb-4">
               Resultados ({locations.length})
             </h2>
           )}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {locations.map((location) => (
               <div
                 key={location.id}
-                className="bg-gray-50 p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
+                className="p-3 border rounded-lg hover:shadow-md hover:border-primary transition-all cursor-pointer"
                 onClick={() =>
                   setMapCenter([location.latitude, location.longitude])
                 }
               >
-                <h3 className="font-bold text-md text-blue-700">
+                <h3 className="font-bold text-md text-primary">
                   {location.name}
                 </h3>
-                <p className="text-sm text-gray-600 break-words">
-                  {location.address}
-                </p>
+                <p className="text-sm text-muted-foreground">{location.address}</p>
                 {firebaseUser && location.whatsapp && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground mt-1">
                     WhatsApp: {location.whatsapp}
                   </p>
                 )}
@@ -154,64 +153,62 @@ const LocationsPage = () => {
         </div>
       </aside>
 
-      <main className="flex-grow min-h-[300px]">
+      {/* Map */}
+      <main className="flex-grow h-[50vh] lg:h-full">
         {isLoading && locations.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <Loader2Icon className="animate-spin text-blue-600" size={48} />
+          <div className="flex items-center justify-center h-full bg-muted">
+            <Loader2Icon className="animate-spin text-primary" size={48} />
           </div>
         ) : (
-          <div className="h-[300px] md:h-full w-full">
-            <MapContainer
-              center={mapCenter}
-              zoom={locations.length > 0 ? 12 : 4}
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; OpenStreetMap"
-              />
-              {locations.length > 0 && <FlyToLocation center={mapCenter} />}
-              {locations.map((location) => (
-                <Marker
-                  key={location.id}
-                  position={[location.latitude, location.longitude]}
-                >
-                  <Popup>
-                    <div className="p-1">
-                      <h3 className="font-bold text-lg text-blue-700 mb-1">
-                        {location.name}
-                      </h3>
-                      <p className="text-gray-700 mb-1 break-words">
-                        {location.address}
-                      </p>
-                      <p className="text-gray-600 mb-2">
-                        {location.city}, {location.state}
-                      </p>
-                      <Link
-                        to={`/locations/${location.id}`}
-                        className="block bg-purple-600 !text-white text-center py-1.5 px-3 rounded-lg mt-2 font-semibold shadow hover:bg-purple-700 transition-colors"
-                      >
-                        Ver Detalhes
-                      </Link>
-                      <a
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block bg-blue-600 !text-white text-center py-1.5 px-3 rounded-lg mt-2 font-semibold shadow hover:bg-blue-700 transition-colors"
-                      >
-                        Como chegar
-                      </a>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
-              {message && locations.length === 0 && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-md shadow-lg z-[1000]">
-                  <p className="text-lg text-gray-700">{message}</p>
-                </div>
-              )}
-            </MapContainer>
-          </div>
+          <MapContainer
+            center={mapCenter}
+            zoom={locations.length > 0 ? 12 : 4}
+            style={{ height: "100%", width: "100%" }}
+            className="z-0"
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap"
+            />
+            {locations.length > 0 && <FlyToLocation center={mapCenter} />}
+            {locations.map((location) => (
+              <Marker
+                key={location.id}
+                position={[location.latitude, location.longitude]}
+              >
+                <Popup>
+                  <div className="p-1 space-y-2">
+                    <h3 className="font-bold text-lg text-primary mb-1">
+                      {location.name}
+                    </h3>
+                    <p className="text-muted-foreground mb-1">{location.address}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {location.city}, {location.state}
+                    </p>
+                    <Link
+                      to={`/locations/${location.id}`}
+                      className="block !text-white text-center py-2 px-3 rounded-lg font-semibold shadow transition-colors bg-primary hover:bg-primary/90"
+                    >
+                      Ver Detalhes
+                    </Link>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block !text-white text-center py-2 px-3 rounded-lg font-semibold shadow transition-colors bg-blue-600 hover:bg-blue-700"
+                    >
+                      Como chegar
+                    </a>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+            {message && locations.length === 0 && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg z-[1000]">
+                <p className="text-lg text-foreground">{message}</p>
+              </div>
+            )}
+          </MapContainer>
         )}
       </main>
     </div>

@@ -16,7 +16,6 @@ import LocationMap from "./LocationMap";
 import LocationForm from "./LocationForm";
 import NearbyLocationsWarning from "./NearbyLocationsWarning";
 import MapInstructionOverlay from "./MapInstructionOverlay";
-import { Button } from "./ui/button";
 
 const AddLocationPage: React.FC = () => {
   const { toast } = useToast();
@@ -241,56 +240,52 @@ const AddLocationPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-2 sm:p-4 max-w-3xl">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Link
-            to="/"
-            className="text-blue-600 hover:underline flex items-center"
-          >
-            <ArrowLeft className="mr-1 h-5 w-5" /> Voltar
-          </Link>
-          <h1 className="text-2xl font-bold flex-1 text-center sm:text-left">
-            Adicionar Local
-          </h1>
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <header className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+          <MapPin />{" "}
+          {markerPosition ? "Complete os Detalhes" : "Adicionar Novo Local"}
+        </h1>
+        <Link
+          to="/locations"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
+        >
+          <ArrowLeft size={16} /> Voltar para a Lista
+        </Link>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        {/* Coluna da Esquerda: Mapa (desktop) / Em cima (mobile) */}
+        <div
+          className={`relative w-full h-[400px] sm:h-[500px] lg:h-[600px] border rounded-lg shadow-sm overflow-hidden order-1 lg:order-1`}
+        >
+          {!markerPosition && <MapInstructionOverlay />}
+          <LocationMap
+            mapCenter={currentMapCenter}
+            mapZoom={currentMapZoom}
+            isLoading={isLoadingLocations}
+            markerPosition={markerPosition}
+            existingLocations={existingLocations}
+            onMapClick={handleMapClick}
+          />
         </div>
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="w-full lg:w-1/2">
-            <div className="rounded-lg overflow-hidden shadow border mb-4">
-              <LocationMap
-                markerPosition={markerPosition}
-                setMarkerPosition={setMarkerPosition}
-                currentMapCenter={currentMapCenter}
-                setCurrentMapCenter={setCurrentMapCenter}
-                currentMapZoom={currentMapZoom}
-                setCurrentMapZoom={setCurrentMapZoom}
-                existingLocations={existingLocations}
-                isLoadingLocations={isLoadingLocations}
-                onMapClick={handleMapClick}
-                onLocateUser={handleLocateUser}
-              />
-            </div>
-            <MapInstructionOverlay />
-            {nearbyLocations.length > 0 && (
-              <NearbyLocationsWarning locations={nearbyLocations} />
-            )}
-          </div>
-          <div className="w-full lg:w-1/2">
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-4 bg-white rounded-lg shadow p-4 border"
-            >
-              <LocationForm
-                values={formValues}
-                onChange={setFormValues}
-                isGeocoding={isGeocoding}
-                markerPosition={markerPosition}
-              />
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Salvando..." : "Salvar Local"}
-              </Button>
-            </form>
-          </div>
+
+        {/* Coluna da Direita: Formulário e Avisos (desktop) / Embaixo (mobile) */}
+        <div
+          className={`space-y-6 order-2 lg:order-2 ${
+            markerPosition ? "block" : "hidden lg:block"
+          }`}
+        >
+          <NearbyLocationsWarning locations={nearbyLocations} />
+          <LocationForm
+            formValues={formValues}
+            isSubmitting={isSubmitting}
+            isGeocoding={isGeocoding}
+            markerPosition={markerPosition}
+            onInputChange={handleInputChange}
+            onSubmit={handleSubmit}
+            onLocateUser={handleLocateUser}
+          />
         </div>
       </div>
     </div>

@@ -11,12 +11,12 @@ import { Loader2 } from "lucide-react";
 
 const getFirebaseErrorMessage = (error: { code: string }) => {
   switch (error.code) {
-    case "auth/invalid-email":
-      return "E-mail inválido.";
-    case "auth/user-not-found":
-      return "Usuário não encontrado.";
+    case 'auth/invalid-email':
+      return 'E-mail inválido.';
+    case 'auth/user-not-found':
+      return 'Usuário não encontrado.';
     default:
-      return "Ocorreu um erro desconhecido.";
+      return 'Ocorreu um erro desconhecido.';
   }
 };
 
@@ -49,9 +49,9 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-muted">
-      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto bg-white rounded-lg shadow p-6">
-        <div className="grid gap-2 text-center mb-6">
+    <div className="flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-screen">
+      <div className="mx-auto grid w-full max-w-sm gap-6">
+        <div className="grid gap-2 text-center">
           <h1 className="text-3xl font-bold">Esqueceu a senha?</h1>
           <p className="text-balance text-muted-foreground">
             Digite seu e-mail para receber um link de redefinição
@@ -71,10 +71,7 @@ export function ForgotPasswordPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}{" "}
-            {isLoading ? "Enviando..." : "Enviar link"}
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} {isLoading ? "Enviando..." : "Enviar link"}
           </Button>
         </form>
         <div className="mt-4 text-center text-sm">

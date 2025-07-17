@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,16 +11,16 @@ import { Loader2 } from "lucide-react";
 
 const getFirebaseErrorMessage = (error: { code: string }) => {
   switch (error.code) {
-    case "auth/invalid-email":
-      return "E-mail inválido.";
-    case "auth/user-disabled":
-      return "Este usuário foi desabilitado.";
-    case "auth/user-not-found":
-      return "Usuário não encontrado.";
-    case "auth/wrong-password":
-      return "Senha incorreta.";
+    case 'auth/invalid-email':
+      return 'E-mail inválido.';
+    case 'auth/user-disabled':
+      return 'Este usuário foi desabilitado.';
+    case 'auth/user-not-found':
+      return 'Usuário não encontrado.';
+    case 'auth/wrong-password':
+      return 'Senha incorreta.';
     default:
-      return "Ocorreu um erro desconhecido.";
+      return 'Ocorreu um erro desconhecido.';
   }
 };
 
@@ -64,7 +60,7 @@ export function LoginPage() {
     } catch (error) {
       toast({
         title: "Erro no login com Google",
-        description: getFirebaseErrorMessage(error as { code: string }),
+        description: getFirebaseErrorMessage(error as { code:string }),
         variant: "destructive",
       });
       console.error(error);
@@ -74,68 +70,68 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-muted">
-      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto bg-white rounded-lg shadow p-6">
-        <div className="grid gap-2 text-center mb-6">
-          <h1 className="text-3xl font-bold">Login</h1>
-          <p className="text-balance text-muted-foreground">
-            Acesse sua conta para continuar
-          </p>
-        </div>
-        <form onSubmit={handleEmailLogin} className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-            />
+    <div className="w-full lg:grid lg:min-h-[100vh] lg:grid-cols-2 xl:min-h-[100vh]">
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-md space-y-6">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold">Login</h1>
+            <p className="text-balance text-muted-foreground">
+              Acesse sua conta para continuar
+            </p>
           </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Senha</Label>
-              <Link
-                to="/forgot-password"
-                className="ml-auto inline-block text-sm underline"
-              >
-                Esqueceu sua senha?
-              </Link>
+          <form onSubmit={handleEmailLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+              />
             </div>
-            <Input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}{" "}
-            {isLoading ? "Entrando..." : "Entrar"}
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Senha</Label>
+                <Link
+                  to="/forgot-password"
+                  className="ml-auto inline-block text-sm underline"
+                >
+                  Esqueceu sua senha?
+                </Link>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} {isLoading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+          <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isLoading}>
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Entrar com Google
           </Button>
-        </form>
-        <Button
-          variant="outline"
-          className="w-full mt-2"
-          onClick={handleGoogleLogin}
-          disabled={isLoading}
-        >
-          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}{" "}
-          Entrar com Google
-        </Button>
-        <div className="mt-4 text-center text-sm">
-          Não tem uma conta?{" "}
-          <Link to="/signup" className="underline">
-            Cadastre-se
-          </Link>
+          <div className="mt-4 text-center text-sm">
+            Não tem uma conta?{" "}
+            <Link to="/signup" className="underline">
+              Cadastre-se
+            </Link>
+          </div>
         </div>
+      </div>
+      <div className="hidden bg-muted md:block">
+        <img
+          src="/home-background.svg"
+          alt="Image"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
       </div>
     </div>
   );

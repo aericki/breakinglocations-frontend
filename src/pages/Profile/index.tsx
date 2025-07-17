@@ -148,33 +148,29 @@ const UserProfilePage = () => {
     firebaseUser && appUser && firebaseUser.uid === appUser.id;
 
   return (
-    <div className="container mx-auto p-2 sm:p-4">
-      <Card className="max-w-full sm:max-w-2xl mx-auto">
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 w-full">
-              <Avatar className="h-20 w-20">
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
                 <AvatarImage
                   src={profileUser.profilePictureUrl}
                   alt={profileUser.name}
                 />
-                <AvatarFallback>
+                <AvatarFallback className="text-3xl">
                   {profileUser.name?.[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col gap-1">
-                <CardTitle className="text-2xl break-words">
-                  {profileUser.name}
-                </CardTitle>
-                <p className="text-muted-foreground break-all">
-                  {profileUser.email}
-                </p>
+              <div className="mt-2 sm:mt-0">
+                <CardTitle className="text-2xl sm:text-3xl">{profileUser.name}</CardTitle>
+                <p className="text-muted-foreground">{profileUser.email}</p>
               </div>
             </div>
             {isOwnProfile && (
               <Dialog open={isEditing} onOpenChange={setIsEditing}>
                 <DialogTrigger asChild>
-                  <Button variant="outline">Editar Perfil</Button>
+                  <Button variant="outline" className="w-full sm:w-auto">Editar Perfil</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
@@ -219,43 +215,47 @@ const UserProfilePage = () => {
             )}
           </div>
           {profileUser.bio && (
-            <CardContent className="pt-4">
-              <p className="break-words">{profileUser.bio}</p>
+            <CardContent className="pt-4 sm:pt-6 text-sm sm:text-base text-muted-foreground">
+              <p>{profileUser.bio}</p>
             </CardContent>
           )}
         </CardHeader>
-        <CardContent>
-          <h3 className="text-xl font-semibold mb-4">Registered Locations</h3>
+        <CardContent className="p-4 sm:p-6">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">Locais Cadastrados</h3>
           {profileUser.locations && profileUser.locations.length > 0 ? (
-            <ul className="flex flex-col gap-2">
+            <ul className="space-y-3">
               {profileUser.locations.map((location) => (
                 <li
                   key={location.id}
-                  className="relative border p-3 rounded-md hover:bg-gray-50"
+                  className="relative border p-3 sm:p-4 rounded-lg hover:bg-muted transition-colors flex justify-between items-center"
                 >
+                  <div>
+                    <Link
+                      to={`/locations/${location.id}`}
+                      className="font-semibold text-primary hover:underline"
+                    >
+                      {location.name}
+                    </Link>
+                    <p className="text-sm text-muted-foreground">
+                      {location.address}
+                    </p>
+                  </div>
                   {isOwnProfile && (
-                    <button
-                      className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive/80"
                       title="Excluir local"
                       onClick={() => handleDeleteLocation(location.id)}
                     >
                       <Trash size={18} />
-                    </button>
+                    </Button>
                   )}
-                  <Link
-                    to={`/locations/${location.id}`}
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    {location.name}
-                  </Link>
-                  <p className="text-sm text-muted-foreground break-words">
-                    {location.address}
-                  </p>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>This user has not registered any locations yet.</p>
+            <p className="text-muted-foreground text-sm">Este usuário ainda não cadastrou locais.</p>
           )}
         </CardContent>
       </Card>
