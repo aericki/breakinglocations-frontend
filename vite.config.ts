@@ -26,16 +26,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor_react';
-            }
-            if (id.includes('firebase')) {
-              return 'vendor_firebase';
-            }
-            if (id.includes('leaflet')) {
-              return 'vendor_leaflet';
-            }
-            return 'vendor'; // all other node_modules
+            return 'vendor';
           }
         }
       }
