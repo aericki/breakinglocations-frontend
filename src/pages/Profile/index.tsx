@@ -148,11 +148,11 @@ const UserProfilePage = () => {
     firebaseUser && appUser && firebaseUser.uid === appUser.id;
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="max-w-2xl mx-auto">
+    <div className="container mx-auto p-2 sm:p-4">
+      <Card className="max-w-full sm:max-w-2xl mx-auto">
         <CardHeader>
-          <div className="flex items-center justify-between space-x-4">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 w-full">
               <Avatar className="h-20 w-20">
                 <AvatarImage
                   src={profileUser.profilePictureUrl}
@@ -162,9 +162,13 @@ const UserProfilePage = () => {
                   {profileUser.name?.[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <CardTitle className="text-2xl">{profileUser.name}</CardTitle>
-                <p className="text-muted-foreground">{profileUser.email}</p>
+              <div className="flex flex-col gap-1">
+                <CardTitle className="text-2xl break-words">
+                  {profileUser.name}
+                </CardTitle>
+                <p className="text-muted-foreground break-all">
+                  {profileUser.email}
+                </p>
               </div>
             </div>
             {isOwnProfile && (
@@ -216,14 +220,14 @@ const UserProfilePage = () => {
           </div>
           {profileUser.bio && (
             <CardContent className="pt-4">
-              <p>{profileUser.bio}</p>
+              <p className="break-words">{profileUser.bio}</p>
             </CardContent>
           )}
         </CardHeader>
         <CardContent>
           <h3 className="text-xl font-semibold mb-4">Registered Locations</h3>
           {profileUser.locations && profileUser.locations.length > 0 ? (
-            <ul className="space-y-2">
+            <ul className="flex flex-col gap-2">
               {profileUser.locations.map((location) => (
                 <li
                   key={location.id}
@@ -244,7 +248,7 @@ const UserProfilePage = () => {
                   >
                     {location.name}
                   </Link>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground break-words">
                     {location.address}
                   </p>
                 </li>

@@ -102,63 +102,65 @@ const LocationsPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <div className="flex flex-grow overflow-hidden">
-        <aside className="w-full md:w-1/3 lg:w-1/4 p-4 bg-white border-r border-gray-200 overflow-y-auto">
-          <form onSubmit={onSearchSubmit} className="flex flex-col gap-3">
-            <Input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Digite o nome da cidade"
-              className="w-full"
-            />
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <Loader2Icon className="animate-spin" size={16} />
-              ) : (
-                <SearchIcon size={16} />
-              )}
-              <span>{isLoading ? "Pesquisando..." : "Pesquisar"}</span>
-            </Button>
-          </form>
-
-          <div className="mt-6">
-            {locations.length > 0 && (
-              <h2 className="text-xl font-semibold mb-3">
-                Resultados ({locations.length})
-              </h2>
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
+      <aside className="w-full md:w-1/3 lg:w-1/4 p-2 sm:p-4 bg-white border-r border-gray-200 overflow-y-auto">
+        <form onSubmit={onSearchSubmit} className="flex flex-col gap-3">
+          <Input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Digite o nome da cidade"
+            className="w-full"
+          />
+          <Button type="submit" disabled={isLoading} className="w-full">
+            {isLoading ? (
+              <Loader2Icon className="animate-spin" size={16} />
+            ) : (
+              <SearchIcon size={16} />
             )}
-            <div className="space-y-4">
-              {locations.map((location) => (
-                <div
-                  key={location.id}
-                  className="bg-gray-50 p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() =>
-                    setMapCenter([location.latitude, location.longitude])
-                  }
-                >
-                  <h3 className="font-bold text-md text-blue-700">
-                    {location.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{location.address}</p>
-                  {firebaseUser && location.whatsapp && (
-                    <p className="text-sm text-gray-600">
-                      WhatsApp: {location.whatsapp}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </aside>
+            <span>{isLoading ? "Pesquisando..." : "Pesquisar"}</span>
+          </Button>
+        </form>
 
-        <main className="flex-grow">
-          {isLoading && locations.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <Loader2Icon className="animate-spin text-blue-600" size={48} />
-            </div>
-          ) : (
+        <div className="mt-6">
+          {locations.length > 0 && (
+            <h2 className="text-xl font-semibold mb-3">
+              Resultados ({locations.length})
+            </h2>
+          )}
+          <div className="space-y-4">
+            {locations.map((location) => (
+              <div
+                key={location.id}
+                className="bg-gray-50 p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() =>
+                  setMapCenter([location.latitude, location.longitude])
+                }
+              >
+                <h3 className="font-bold text-md text-blue-700">
+                  {location.name}
+                </h3>
+                <p className="text-sm text-gray-600 break-words">
+                  {location.address}
+                </p>
+                {firebaseUser && location.whatsapp && (
+                  <p className="text-sm text-gray-600">
+                    WhatsApp: {location.whatsapp}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <main className="flex-grow min-h-[300px]">
+        {isLoading && locations.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2Icon className="animate-spin text-blue-600" size={48} />
+          </div>
+        ) : (
+          <div className="h-[300px] md:h-full w-full">
             <MapContainer
               center={mapCenter}
               zoom={locations.length > 0 ? 12 : 4}
@@ -179,7 +181,9 @@ const LocationsPage = () => {
                       <h3 className="font-bold text-lg text-blue-700 mb-1">
                         {location.name}
                       </h3>
-                      <p className="text-gray-700 mb-1">{location.address}</p>
+                      <p className="text-gray-700 mb-1 break-words">
+                        {location.address}
+                      </p>
                       <p className="text-gray-600 mb-2">
                         {location.city}, {location.state}
                       </p>
@@ -207,9 +211,9 @@ const LocationsPage = () => {
                 </div>
               )}
             </MapContainer>
-          )}
-        </main>
-      </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
