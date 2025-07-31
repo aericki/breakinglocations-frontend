@@ -1,5 +1,5 @@
 // src/pages/Profile/index.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { User } from "@/types";
 import { api } from "@/api/locationApi";
@@ -40,7 +40,7 @@ const UserProfilePage = () => {
     bio: "",
   });
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     if (!id || authLoading) return; // Wait for auth to load
 
     try {
@@ -60,7 +60,7 @@ const UserProfilePage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, authLoading, firebaseUser]);
 
   const handleEditChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -129,8 +129,7 @@ const UserProfilePage = () => {
 
   useEffect(() => {
     fetchUserProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, firebaseUser, authLoading]);
+  }, [fetchUserProfile]);
 
   if (loading || authLoading) {
     return <div className="text-center py-10">Loading profile...</div>;
