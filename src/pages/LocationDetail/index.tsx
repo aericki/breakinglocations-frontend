@@ -17,21 +17,21 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StarRating } from "@/components/StarRating";
-import { 
-  Heart, 
-  Camera, 
-  Star, 
-  ArrowLeft, 
-  MapPin, 
-  Navigation, 
-  Phone, 
+import {
+  Heart,
+  Camera,
+  Star,
+  ArrowLeft,
+  MapPin,
+  Navigation,
+  Phone,
   Share2,
   MessageCircle,
   User,
   ThumbsUp,
   Loader2,
   Badge as BadgeIcon,
-  Award
+  Award,
 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import {
@@ -89,7 +89,11 @@ const RatingModal = ({
     onSubmit(ratings);
   };
 
-  const ratingCategories: { key: keyof typeof ratings; label: string; icon: React.ReactNode }[] = [
+  const ratingCategories: {
+    key: keyof typeof ratings;
+    label: string;
+    icon: React.ReactNode;
+  }[] = [
     { key: "floor", label: "Piso", icon: <BadgeIcon className="w-4 h-4" /> },
     { key: "space", label: "Espaço", icon: <MapPin className="w-4 h-4" /> },
     { key: "safety", label: "Segurança", icon: <Award className="w-4 h-4" /> },
@@ -108,7 +112,10 @@ const RatingModal = ({
         </DialogHeader>
         <div className="py-6 space-y-6">
           {ratingCategories.map(({ key, label, icon }) => (
-            <div key={key} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+            <div
+              key={key}
+              className="flex justify-between items-center p-4 bg-gray-50 rounded-xl"
+            >
               <div className="flex items-center gap-3">
                 <div className="text-blue-600">{icon}</div>
                 <span className="font-medium text-gray-900">{label}</span>
@@ -121,8 +128,8 @@ const RatingModal = ({
           ))}
         </div>
         <DialogFooter>
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={handleSubmit}
             disabled={isSubmitting}
             className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
@@ -306,7 +313,10 @@ const LocationDetailPage: React.FC = () => {
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Link copiado!", description: "URL copiada para a área de transferência" });
+      toast({
+        title: "Link copiado!",
+        description: "URL copiada para a área de transferência",
+      });
     }
   };
 
@@ -320,18 +330,39 @@ const LocationDetailPage: React.FC = () => {
       </div>
     );
   }
-  
+
   if (error) return <div className="text-center text-red-500 p-8">{error}</div>;
-  if (!location) return <div className="text-center p-8">Location not found.</div>;
+  if (!location)
+    return <div className="text-center p-8">Location not found.</div>;
 
   const mapPosition: [number, number] = [location.latitude, location.longitude];
 
   const ratingDetails = [
-    { label: "Piso", value: location.averageFloor, icon: <BadgeIcon className="w-4 h-4" /> },
-    { label: "Espaço", value: location.averageSpace, icon: <MapPin className="w-4 h-4" /> },
-    { label: "Segurança", value: location.averageSafety, icon: <Award className="w-4 h-4" /> },
-    { label: "Som", value: location.averageSound, icon: <Star className="w-4 h-4" /> },
-    { label: "Vibe", value: location.averageVibe, icon: <Heart className="w-4 h-4" /> },
+    {
+      label: "Piso",
+      value: location.averageFloor,
+      icon: <BadgeIcon className="w-4 h-4" />,
+    },
+    {
+      label: "Espaço",
+      value: location.averageSpace,
+      icon: <MapPin className="w-4 h-4" />,
+    },
+    {
+      label: "Segurança",
+      value: location.averageSafety,
+      icon: <Award className="w-4 h-4" />,
+    },
+    {
+      label: "Som",
+      value: location.averageSound,
+      icon: <Star className="w-4 h-4" />,
+    },
+    {
+      label: "Vibe",
+      value: location.averageVibe,
+      icon: <Heart className="w-4 h-4" />,
+    },
   ];
 
   return (
@@ -372,7 +403,7 @@ const LocationDetailPage: React.FC = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
               <Badge variant="secondary" className="px-3 py-1">
                 <User className="w-3 h-3 mr-1" />
@@ -382,7 +413,7 @@ const LocationDetailPage: React.FC = () => {
                 <Star className="w-3 h-3 mr-1 fill-current" />
                 {location.overallAverage.toFixed(1)} / 5
               </Badge>
-              <Badge variant="success" className="px-3 py-1">
+              <Badge variant="default" className="px-3 py-1">
                 <ThumbsUp className="w-3 h-3 mr-1" />
                 {likesCount} curtidas
               </Badge>
@@ -430,7 +461,11 @@ const LocationDetailPage: React.FC = () => {
                     Fotos ({location.photos.length})
                   </CardTitle>
                   {currentUser && (
-                    <Button onClick={handleAddPhoto} size="sm" className="rounded-lg">
+                    <Button
+                      onClick={handleAddPhoto}
+                      size="sm"
+                      className="rounded-lg"
+                    >
                       <Camera className="mr-2 h-4 w-4" />
                       Adicionar Foto
                     </Button>
@@ -489,7 +524,10 @@ const LocationDetailPage: React.FC = () => {
                   <div className="text-5xl font-bold text-gray-900 mb-2">
                     {location.overallAverage.toFixed(1)}
                   </div>
-                  <StarRating initialRating={location.overallAverage} readOnly />
+                  <StarRating
+                    initialRating={location.overallAverage}
+                    readOnly
+                  />
                   <p className="text-sm text-gray-600 mt-2">
                     Baseado em {location.ratingsCount} avaliações
                   </p>
@@ -497,25 +535,40 @@ const LocationDetailPage: React.FC = () => {
 
                 <div className="space-y-3 mb-6">
                   {ratingDetails.map((detail) => (
-                    <div key={detail.label} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={detail.label}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div className="flex items-center gap-2">
                         <div className="text-blue-600">{detail.icon}</div>
-                        <span className="font-medium text-gray-900">{detail.label}</span>
+                        <span className="font-medium text-gray-900">
+                          {detail.label}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-900">{detail.value.toFixed(1)}</span>
-                        <Star size={16} className="text-yellow-400 fill-current" />
+                        <span className="font-bold text-gray-900">
+                          {detail.value.toFixed(1)}
+                        </span>
+                        <Star
+                          size={16}
+                          className="text-yellow-400 fill-current"
+                        />
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {currentUser && (
-                  <Dialog open={isRatingModalOpen} onOpenChange={setIsRatingModalOpen}>
+                  <Dialog
+                    open={isRatingModalOpen}
+                    onOpenChange={setIsRatingModalOpen}
+                  >
                     <DialogTrigger asChild>
                       <Button className="w-full rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
                         <Star className="w-4 h-4 mr-2" />
-                        {location.ratings.some((r) => r.userId === currentUser.uid)
+                        {location.ratings.some(
+                          (r) => r.userId === currentUser.uid
+                        )
                           ? "Editar Avaliação"
                           : "Avaliar Local"}
                       </Button>
@@ -539,8 +592,12 @@ const LocationDetailPage: React.FC = () => {
                   {/* Like Button */}
                   <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl">
                     <div>
-                      <div className="font-semibold text-gray-900">Curtidas</div>
-                      <div className="text-2xl font-bold text-red-600">{likesCount}</div>
+                      <div className="font-semibold text-gray-900">
+                        Curtidas
+                      </div>
+                      <div className="text-2xl font-bold text-red-600">
+                        {likesCount}
+                      </div>
                     </div>
                     {currentUser && (
                       <Button
@@ -549,15 +606,17 @@ const LocationDetailPage: React.FC = () => {
                         onClick={handleLikeClick}
                         disabled={isLiking}
                         className={`rounded-xl ${
-                          isLiked 
-                            ? 'bg-red-500 hover:bg-red-600 text-white' 
-                            : 'border-red-500 text-red-500 hover:bg-red-50'
+                          isLiked
+                            ? "bg-red-500 hover:bg-red-600 text-white"
+                            : "border-red-500 text-red-500 hover:bg-red-50"
                         }`}
                       >
                         <Heart
-                          className={`h-5 w-5 mr-2 ${isLiked ? 'fill-current' : ''}`}
+                          className={`h-5 w-5 mr-2 ${
+                            isLiked ? "fill-current" : ""
+                          }`}
                         />
-                        {isLiked ? 'Curtido' : 'Curtir'}
+                        {isLiked ? "Curtido" : "Curtir"}
                       </Button>
                     )}
                   </div>
@@ -569,7 +628,10 @@ const LocationDetailPage: React.FC = () => {
                     rel="noopener noreferrer"
                     className="block"
                   >
-                    <Button variant="outline" className="w-full rounded-xl border-2">
+                    <Button
+                      variant="outline"
+                      className="w-full rounded-xl border-2"
+                    >
                       <Navigation className="w-4 h-4 mr-2" />
                       Como Chegar
                     </Button>
@@ -578,12 +640,18 @@ const LocationDetailPage: React.FC = () => {
                   {/* WhatsApp Contact */}
                   {location.whatsapp && (
                     <a
-                      href={`https://wa.me/${location.whatsapp.replace(/\D/g, '')}`}
+                      href={`https://wa.me/${location.whatsapp.replace(
+                        /\D/g,
+                        ""
+                      )}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block"
                     >
-                      <Button variant="outline" className="w-full rounded-xl border-green-500 text-green-600 hover:bg-green-50">
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl border-green-500 text-green-600 hover:bg-green-50"
+                      >
                         <Phone className="w-4 h-4 mr-2" />
                         Contato WhatsApp
                       </Button>
@@ -611,8 +679,8 @@ const LocationDetailPage: React.FC = () => {
                       className="mb-3 rounded-xl border-2 resize-none"
                       rows={3}
                     />
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={isSubmittingComment || !newComment.trim()}
                       className="w-full rounded-xl"
                     >
@@ -634,7 +702,10 @@ const LocationDetailPage: React.FC = () => {
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {location.comments.length > 0 ? (
                     location.comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-3 p-4 bg-gray-50 rounded-xl">
+                      <div
+                        key={comment.id}
+                        className="flex gap-3 p-4 bg-gray-50 rounded-xl"
+                      >
                         <Avatar className="w-10 h-10">
                           <AvatarImage
                             src={comment.user.profilePictureUrl || undefined}
@@ -646,12 +717,18 @@ const LocationDetailPage: React.FC = () => {
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-semibold text-gray-900">{comment.user.name}</p>
+                            <p className="font-semibold text-gray-900">
+                              {comment.user.name}
+                            </p>
                             <p className="text-xs text-gray-500">
-                              {new Date(comment.createdAt).toLocaleDateString('pt-BR')}
+                              {new Date(comment.createdAt).toLocaleDateString(
+                                "pt-BR"
+                              )}
                             </p>
                           </div>
-                          <p className="text-sm text-gray-700 leading-relaxed">{comment.text}</p>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            {comment.text}
+                          </p>
                         </div>
                       </div>
                     ))

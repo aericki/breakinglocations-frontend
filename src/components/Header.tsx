@@ -34,7 +34,7 @@ export function Header() {
       }
       lastScrollY.current = window.scrollY;
     };
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -65,70 +65,70 @@ export function Header() {
   return (
     <>
       <header
-        className={`backdrop-blur-xl bg-gradient-to-r from-blue-600/70 to-purple-600/70 shadow-lg sticky top-0 z-40 transition-transform duration-300 ${
+        className={`backdrop-blur-xl bg-gradient-to-r from-blue-600/80 to-purple-600/80 shadow-lg sticky top-0 z-40 transition-transform duration-300 border-b border-white/10 ${
           showHeader ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 sm:h-20 items-center justify-between">
-            
+          <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
-              <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg group-hover:scale-105 transition-transform">
-                <MapPin className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
+            <Link
+              to="/"
+              className="flex items-center gap-2 group flex-shrink-0"
+            >
+              <span className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg group-hover:scale-105 transition-transform">
+                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </span>
-              <span className="text-lg sm:text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-blue-200 via-white to-purple-200 bg-clip-text text-transparent tracking-tight group-hover:brightness-110 transition-all">
+              <span className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-blue-200 via-white to-purple-200 bg-clip-text text-transparent tracking-tight group-hover:brightness-110 transition-all">
                 BreakingLocations
               </span>
             </Link>
 
             {/* Navegação Desktop */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 mx-6">
+            <nav className="hidden lg:flex items-center gap-1 mx-6 flex-1 justify-center">
               <Link
                 to="/"
-                className={`text-white font-medium transition-all hover:text-blue-200 px-3 py-2 rounded-lg ${
-                  isActiveRoute("/") ? "bg-white/20 text-blue-100" : ""
+                className={`text-white/90 font-medium transition-all hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm ${
+                  isActiveRoute("/") ? "bg-white/20 text-white" : ""
                 }`}
               >
                 Início
               </Link>
               <Link
                 to="/locations"
-                className={`text-white font-medium transition-all hover:text-blue-200 px-3 py-2 rounded-lg ${
-                  isActiveRoute("/locations") ? "bg-white/20 text-blue-100" : ""
+                className={`text-white/90 font-medium transition-all hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm ${
+                  isActiveRoute("/locations") ? "bg-white/20 text-white" : ""
                 }`}
               >
                 Locais
               </Link>
-              <Link
-                to="/add-location"
-                className={`text-white font-medium transition-all hover:text-blue-200 px-3 py-2 rounded-lg ${
-                  isActiveRoute("/add-location") ? "bg-white/20 text-blue-100" : ""
-                }`}
-              >
-                Adicionar Local
-              </Link>
+              {firebaseUser && (
+                <Link
+                  to="/add-location"
+                  className={`text-white/90 font-medium transition-all hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm ${
+                    isActiveRoute("/add-location")
+                      ? "bg-white/20 text-white"
+                      : ""
+                  }`}
+                >
+                  Adicionar Local
+                </Link>
+              )}
             </nav>
 
             {/* Ações do Usuário Desktop */}
-            <div className="hidden md:flex items-center gap-2 lg:gap-3 flex-shrink-0">
+            <div className="hidden md:flex items-center gap-2 flex-shrink-0">
               {firebaseUser ? (
-                <>
-                  <span className="text-sm text-white/80 font-medium max-w-32 lg:max-w-none truncate">
-                    Olá, {appUser?.name || appUser?.email}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-white/80 font-medium max-w-24 lg:max-w-32 truncate">
+                    {appUser?.name || "Usuário"}
                   </span>
-                  <Link to="/add-location" className="hidden lg:block">
-                    <Button className="rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg text-white font-semibold px-4 py-2 transition-all text-sm">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Adicionar Local
-                    </Button>
-                  </Link>
                   <Link to={`/profile/${firebaseUser.uid}`}>
                     <Button
                       variant="ghost"
                       size="icon"
                       title="Meu Perfil"
-                      className="rounded-xl bg-white/20 hover:bg-white/40 text-white h-9 w-9"
+                      className="rounded-lg bg-white/10 hover:bg-white/20 text-white h-8 w-8"
                     >
                       <User className="h-4 w-4" />
                       <span className="sr-only">Meu Perfil</span>
@@ -138,26 +138,27 @@ export function Header() {
                     size="icon"
                     variant="ghost"
                     onClick={handleLogout}
-                    className="rounded-xl bg-white/20 hover:bg-white/40 text-white h-9 w-9"
+                    title="Sair"
+                    className="rounded-lg bg-white/10 hover:bg-white/20 text-white h-8 w-8"
                   >
                     <LogOut className="h-4 w-4" />
                     <span className="sr-only">Sair</span>
                   </Button>
-                </>
+                </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Link to="/login">
                     <Button
-                      variant="outline"
-                      className="rounded-xl border-white/60 bg-white/20 text-white hover:bg-white/40 hover:text-blue-700 font-semibold px-4 py-2 transition-all text-sm"
+                      variant="ghost"
+                      className="rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium px-3 py-1.5 text-sm h-8"
                     >
-                      <LogIn className="mr-2 h-4 w-4" />
+                      <LogIn className="mr-1.5 h-3.5 w-3.5" />
                       Login
                     </Button>
                   </Link>
                   <Link to="/signup">
-                    <Button className="rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg text-white font-semibold px-4 py-2 transition-all text-sm">
-                      <UserPlus className="mr-2 h-4 w-4" />
+                    <Button className="rounded-lg bg-white/20 hover:bg-white/30 text-white font-medium px-3 py-1.5 text-sm h-8 shadow-sm">
+                      <UserPlus className="mr-1.5 h-3.5 w-3.5" />
                       Cadastre-se
                     </Button>
                   </Link>
@@ -173,7 +174,7 @@ export function Header() {
                     variant="ghost"
                     size="icon"
                     title="Meu Perfil"
-                    className="rounded-xl bg-white/20 hover:bg-white/40 text-white h-8 w-8"
+                    className="rounded-lg bg-white/10 hover:bg-white/20 text-white h-8 w-8"
                   >
                     <User className="h-4 w-4" />
                   </Button>
@@ -182,10 +183,10 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white h-8 w-8"
+                className="text-white h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20"
                 onClick={() => setMenuOpen(true)}
               >
-                <MenuIcon className="h-5 w-5" />
+                <MenuIcon className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -196,95 +197,100 @@ export function Header() {
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           {/* Backdrop */}
-          <div 
+          <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
-          
+
           {/* Drawer */}
-          <div className="absolute right-0 top-0 h-full w-80 max-w-[90vw] bg-gradient-to-br from-blue-700 to-purple-700 shadow-2xl">
+          <div className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-gradient-to-br from-blue-700/95 to-purple-700/95 backdrop-blur-xl shadow-2xl border-l border-white/10">
             <div className="flex flex-col h-full p-6">
-              
               {/* Header do Menu */}
-              <div className="flex items-center justify-between mb-8">
-                <span className="text-xl font-bold text-white">Menu</span>
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-lg font-semibold text-white">Menu</span>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setMenuOpen(false)}
-                  className="text-white h-8 w-8"
+                  className="text-white h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20"
                 >
-                  <CloseIcon className="h-5 w-5" />
+                  <CloseIcon className="h-4 w-4" />
                 </Button>
               </div>
 
               {/* Navegação */}
-              <nav className="flex flex-col gap-4">
+              <nav className="flex flex-col gap-2">
                 <Link
                   to="/"
-                  className={`text-white text-lg font-medium hover:text-blue-200 transition-colors p-2 rounded-lg ${
-                    isActiveRoute("/") ? "bg-white/20" : ""
+                  className={`text-white font-medium hover:text-blue-200 transition-colors px-3 py-2.5 rounded-lg ${
+                    isActiveRoute("/") ? "bg-white/20" : "hover:bg-white/10"
                   }`}
                 >
                   Início
                 </Link>
                 <Link
                   to="/locations"
-                  className={`text-white text-lg font-medium hover:text-blue-200 transition-colors p-2 rounded-lg ${
-                    isActiveRoute("/locations") ? "bg-white/20" : ""
+                  className={`text-white font-medium hover:text-blue-200 transition-colors px-3 py-2.5 rounded-lg ${
+                    isActiveRoute("/locations")
+                      ? "bg-white/20"
+                      : "hover:bg-white/10"
                   }`}
                 >
                   Locais
                 </Link>
-                <Link
-                  to="/add-location"
-                  className={`text-white text-lg font-medium hover:text-blue-200 transition-colors p-2 rounded-lg ${
-                    isActiveRoute("/add-location") ? "bg-white/20" : ""
-                  }`}
-                >
-                  Adicionar Local
-                </Link>
+                {firebaseUser && (
+                  <Link
+                    to="/add-location"
+                    className={`text-white font-medium hover:text-blue-200 transition-colors px-3 py-2.5 rounded-lg ${
+                      isActiveRoute("/add-location")
+                        ? "bg-white/20"
+                        : "hover:bg-white/10"
+                    }`}
+                  >
+                    Adicionar Local
+                  </Link>
+                )}
               </nav>
 
               {/* Espaçador */}
               <div className="flex-1" />
 
               {/* Ações do usuário no drawer */}
-              <div className="border-t border-white/20 pt-6 mt-6">
+              <div className="border-t border-white/20 pt-4 mt-4">
                 {firebaseUser ? (
-                  <div className="space-y-4">
-                    <div className="text-white/80 text-sm">
-                      Olá, {appUser?.name || appUser?.email}
+                  <div className="space-y-3">
+                    <div className="text-white/80 text-sm px-3">
+                      {appUser?.name || "Usuário"}
                     </div>
                     <Link
                       to={`/profile/${firebaseUser.uid}`}
-                      className="flex items-center gap-3 text-white font-medium hover:text-blue-200 transition-colors p-2 rounded-lg"
+                      className="flex items-center gap-3 text-white font-medium hover:text-blue-200 transition-colors px-3 py-2.5 rounded-lg hover:bg-white/10"
                     >
-                      <User className="h-5 w-5" />
+                      <User className="h-4 w-4" />
                       Meu Perfil
                     </Link>
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-white hover:text-blue-200 hover:bg-white/10 p-2"
+                      className="w-full justify-start text-white hover:text-blue-200 hover:bg-white/10 px-3 py-2.5 rounded-lg"
                       onClick={handleLogout}
                     >
-                      <LogOut className="h-5 w-5 mr-3" />
+                      <LogOut className="h-4 w-4 mr-3" />
                       Sair
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <Link to="/login" className="block">
                       <Button
-                        variant="outline"
-                        className="w-full rounded-xl border-white/60 bg-white/20 text-white hover:bg-white/40 hover:text-blue-700 font-semibold"
+                        variant="ghost"
+                        className="w-full rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium py-2.5"
                       >
                         <LogIn className="mr-2 h-4 w-4" />
                         Login
                       </Button>
                     </Link>
                     <Link to="/signup" className="block">
-                      <Button className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg text-white font-semibold">
+                      <Button className="w-full rounded-lg bg-white/20 hover:bg-white/30 text-white font-medium py-2.5">
                         <UserPlus className="mr-2 h-4 w-4" />
                         Cadastre-se
                       </Button>

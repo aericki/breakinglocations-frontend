@@ -147,117 +147,138 @@ const UserProfilePage = () => {
     firebaseUser && appUser && firebaseUser.uid === appUser.id;
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
-                <AvatarImage
-                  src={profileUser.profilePictureUrl}
-                  alt={profileUser.name}
-                />
-                <AvatarFallback className="text-3xl">
-                  {profileUser.name?.[0]?.toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="mt-2 sm:mt-0">
-                <CardTitle className="text-2xl sm:text-3xl">{profileUser.name}</CardTitle>
-                <p className="text-muted-foreground">{profileUser.email}</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+        <Card className="w-full max-w-4xl mx-auto shadow-xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+          <CardHeader className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-blue-500/20">
+                  <AvatarImage
+                    src={profileUser.profilePictureUrl}
+                    alt={profileUser.name}
+                  />
+                  <AvatarFallback className="text-3xl bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+                    {profileUser.name?.[0]?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="mt-2 sm:mt-0">
+                  <CardTitle className="text-2xl sm:text-3xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {profileUser.name}
+                  </CardTitle>
+                  <p className="text-muted-foreground">{profileUser.email}</p>
+                </div>
               </div>
-            </div>
-            {isOwnProfile && (
-              <Dialog open={isEditing} onOpenChange={setIsEditing}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full sm:w-auto">Editar Perfil</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Editar Perfil</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleEditSubmit} className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label htmlFor="name" className="text-right">
-                        Nome
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={editForm.name}
-                        onChange={handleEditChange}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label htmlFor="bio" className="text-right">
-                        Bio
-                      </label>
-                      <Textarea
-                        id="bio"
-                        name="bio"
-                        value={editForm.bio}
-                        onChange={handleEditChange}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button type="button" variant="outline">
-                          Cancelar
-                        </Button>
-                      </DialogClose>
-                      <Button type="submit">Salvar mudanças</Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
-          {profileUser.bio && (
-            <CardContent className="pt-4 sm:pt-6 text-sm sm:text-base text-muted-foreground">
-              <p>{profileUser.bio}</p>
-            </CardContent>
-          )}
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6">
-          <h3 className="text-lg sm:text-xl font-semibold mb-4">Locais Cadastrados</h3>
-          {profileUser.locations && profileUser.locations.length > 0 ? (
-            <ul className="space-y-3">
-              {profileUser.locations.map((location) => (
-                <li
-                  key={location.id}
-                  className="relative border p-3 sm:p-4 rounded-lg hover:bg-muted transition-colors flex justify-between items-center"
-                >
-                  <div>
-                    <Link
-                      to={`/locations/${location.id}`}
-                      className="font-semibold text-primary hover:underline"
-                    >
-                      {location.name}
-                    </Link>
-                    <p className="text-sm text-muted-foreground">
-                      {location.address}
-                    </p>
-                  </div>
-                  {isOwnProfile && (
+              {isOwnProfile && (
+                <Dialog open={isEditing} onOpenChange={setIsEditing}>
+                  <DialogTrigger asChild>
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive hover:text-destructive/80"
-                      title="Excluir local"
-                      onClick={() => handleDeleteLocation(location.id)}
+                      variant="outline"
+                      className="w-full sm:w-auto border-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 dark:hover:from-blue-800/30 dark:hover:to-purple-800/30"
                     >
-                      <Trash size={18} />
+                      Editar Perfil
                     </Button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted-foreground text-sm">Este usuário ainda não cadastrou locais.</p>
-          )}
-        </CardContent>
-      </Card>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Editar Perfil</DialogTitle>
+                    </DialogHeader>
+                    <form
+                      onSubmit={handleEditSubmit}
+                      className="grid gap-4 py-4"
+                    >
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label htmlFor="name" className="text-right">
+                          Nome
+                        </label>
+                        <Input
+                          id="name"
+                          name="name"
+                          value={editForm.name}
+                          onChange={handleEditChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label htmlFor="bio" className="text-right">
+                          Bio
+                        </label>
+                        <Textarea
+                          id="bio"
+                          name="bio"
+                          value={editForm.bio}
+                          onChange={handleEditChange}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline">
+                            Cancelar
+                          </Button>
+                        </DialogClose>
+                        <Button
+                          type="submit"
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                        >
+                          Salvar mudanças
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+            {profileUser.bio && (
+              <CardContent className="pt-4 sm:pt-6 text-sm sm:text-base text-muted-foreground">
+                <p>{profileUser.bio}</p>
+              </CardContent>
+            )}
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <h3 className="text-lg sm:text-xl font-semibold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Locais Cadastrados
+            </h3>
+            {profileUser.locations && profileUser.locations.length > 0 ? (
+              <ul className="space-y-3">
+                {profileUser.locations.map((location) => (
+                  <li
+                    key={location.id}
+                    className="relative border-2 p-3 sm:p-4 rounded-xl hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 transition-all duration-200 flex justify-between items-center shadow-sm hover:shadow-md"
+                  >
+                    <div>
+                      <Link
+                        to={`/locations/${location.id}`}
+                        className="font-semibold text-blue-600 hover:text-purple-600 transition-colors duration-200 hover:underline"
+                      >
+                        {location.name}
+                      </Link>
+                      <p className="text-sm text-muted-foreground">
+                        {location.address}
+                      </p>
+                    </div>
+                    {isOwnProfile && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        title="Excluir local"
+                        onClick={() => handleDeleteLocation(location.id)}
+                      >
+                        <Trash size={18} />
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-muted-foreground text-sm">
+                Este usuário ainda não cadastrou locais.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
