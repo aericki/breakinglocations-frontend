@@ -61,7 +61,7 @@ export default function HomePage() {
         <div className="relative container mx-auto px-4 py-16 sm:py-24 lg:py-32">
           <div className="text-center space-y-8">
             <div className="space-y-4">
-              <Badge className="mx-auto w-fit px-4 py-2 text-sm font-medium">
+              <Badge className="mx-auto w-fit px-4 py-2 text-sm font-medium text-white">
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Descubra novos spots
               </Badge>
@@ -106,7 +106,7 @@ export default function HomePage() {
               <Link to="/add-location">
                 <Button
                   size="lg"
-                  className="rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="rounded-xl  bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <Plus className="w-5 h-5 mr-2" />
                   Adicionar Local
@@ -116,9 +116,9 @@ export default function HomePage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="rounded-xl border-2 bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300"
+                  className="rounded-xl border-black bg-black backdrop-blur-sm hover:bg-white/80 transition-all duration-300 text-white"
                 >
-                  <MapPin className="w-5 h-5 mr-2" />
+                  <MapPin className="w-5 h-5 mr-2 bg-black" />
                   Ver Todos os Locais
                 </Button>
               </Link>

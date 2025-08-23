@@ -405,8 +405,8 @@ const LocationsPage = () => {
                   Seja o primeiro a adicionar um local nesta cidade!
                 </p>
                 <Link to="/add-location">
-                  <Button className="rounded-lg px-6">
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button className="rounded-lg px-6 text-white">
+                    <Plus className="w-4 h-4 mr-2 text-white" />
                     Adicionar Local
                   </Button>
                 </Link>
@@ -530,7 +530,7 @@ const LocationsPage = () => {
                 <Link to="/add-location">
                   <Button
                     size="lg"
-                    className="rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6"
+                    className="rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6"
                   >
                     <Plus className="w-5 h-5 mr-2" />
                     Adicionar Local
@@ -548,7 +548,7 @@ const LocationsPage = () => {
               size="lg"
               className="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-2xl transition-all duration-300 hover:scale-105"
             >
-              <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </Button>
           </Link>
         </div>

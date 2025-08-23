@@ -84,13 +84,13 @@ export function SignUpPage() {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Cadastro
               </h1>
-              <p className="text-balance text-muted-foreground mt-2">
+              <p className="text-balance text-muted-foreground mt-2 text-white">
                 Crie sua conta para começar
               </p>
             </div>
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
+                <Label htmlFor="name" className="text-white">Nome</Label>
                 <Input
                   id="name"
                   type="text"
@@ -99,11 +99,11 @@ export function SignUpPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
-                  className="border-2"
+                  className="border-2 text-white bg-white/10 border-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-white">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -112,11 +112,11 @@ export function SignUpPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                  className="border-2"
+                  className="border-2 text-white bg-white/10 border-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password" className="text-white">Senha</Label>
                 <Input
                   id="password"
                   type="password"
@@ -124,11 +124,11 @@ export function SignUpPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
-                  className="border-2"
+                  className="border-2 text-white bg-white/10 border-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                <Label htmlFor="confirm-password" className="text-white">Confirmar Senha</Label>
                 <Input
                   id="confirm-password"
                   type="password"
@@ -136,12 +136,12 @@ export function SignUpPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isLoading}
-                  className="border-2"
+                  className="border-2 text-white bg-white/10 border-white"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg text-white"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -150,11 +150,11 @@ export function SignUpPage() {
                 {isLoading ? "Criando conta..." : "Criar conta"}
               </Button>
             </form>
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-sm text-white">
               Já tem uma conta?{" "}
               <Link
                 to="/login"
-                className="underline text-blue-600 hover:text-purple-600"
+                className="underline text-white hover:text-purple-600"
               >
                 Login
               </Link>
