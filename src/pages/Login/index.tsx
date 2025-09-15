@@ -82,13 +82,13 @@ export function LoginPage() {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Login
               </h1>
-              <p className="text-balance text-muted-foreground mt-2">
+              <p className="text-balance text-muted-foreground mt-2 text-white">
                 Acesse sua conta para continuar
               </p>
             </div>
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-white">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -97,15 +97,15 @@ export function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                  className="border-2"
+                  className="border-2 text-white bg-white/10 border-white"
                 />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
+                  <Label htmlFor="password" className="text-white">Senha</Label>
                   <Link
                     to="/forgot-password"
-                    className="ml-auto inline-block text-sm underline"
+                    className="ml-auto inline-block text-sm underline text-white"
                   >
                     Esqueceu sua senha?
                   </Link>
@@ -117,7 +117,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
-                  className="border-2"
+                  className="border-2 text-white bg-white/10 border-white"
                 />
               </div>
               <Button
@@ -133,7 +133,7 @@ export function LoginPage() {
             </form>
             <Button
               variant="outline"
-              className="w-full border-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20"
+              className="w-full border-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 text-white"
               onClick={handleGoogleLogin}
               disabled={isLoading}
             >
@@ -142,11 +142,11 @@ export function LoginPage() {
               ) : null}{" "}
               Entrar com Google
             </Button>
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-sm text-white">
               Não tem uma conta?{" "}
               <Link
                 to="/signup"
-                className="underline text-blue-600 hover:text-purple-600"
+                className="underline text-white hover:text-purple-600"
               >
                 Cadastre-se
               </Link>
